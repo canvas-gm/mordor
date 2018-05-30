@@ -1,5 +1,12 @@
+// Require Node.JS dependencies
+const { readdirSync } = require("fs");
+const { join, extname, basename } = require("path");
+
 // Require internal Dependencies
 const socketMessageWrapper = require("./socketMessageWrapper");
+
+// Require Third-party Dependencies
+const { red, green, blue } = require("chalk");
 
 // Require events name
 const socketEventsName = require("./socketTitles.json");
@@ -8,14 +15,36 @@ const socketEventsName = require("./socketTitles.json");
 const socketEvents = new socketMessageWrapper();
 socketEvents.on("error", console.error);
 
-// Handle message(s) here!
-function authentication(socket, { foo }) {
-    console.log(`foo value => ${foo}`);
-    socketEvents.send(socket, "yop", {foo: "xd"});
-}
+// Require all .js file in the /events dir
+const eventsDir = join(__dirname, "events");
+const files = readdirSync(eventsDir);
+for (const file of files) {
+    // Skip if extension doesn't match .js
+    const fileExt = extname(file);
+    if (fileExt !== ".js") {
+        continue;
+    }
 
-// Handle all events by name!
-socketEvents.on(socketEventsName.authentication, authentication);
+    try {
+        const handler = require(join(eventsDir, file));
+        const fileBaseName = basename(file, fileExt);
+        let eventName = fileBaseName;
+
+        if (Reflect.has(socketEventsName, fileBaseName)) {
+            eventName = Reflect.get(socketEventsName, fileBaseName);
+        }
+
+        console.log(green(`Loading socket event :: ${eventName}`));
+        socketEvents.on(eventName, (socket) => {
+            console.log(blue(`Event ${eventName} triggered by socket ${socket.id}`));
+        });
+        socketEvents.on(eventName, handler.bind(socketEvents));
+    }
+    catch(error) {
+        console.error(red(`Failed to load event file ${file}`));
+        console.error(red(error));
+    }
+}
 
 // Exports socketEvents...
 module.exports = socketEvents;

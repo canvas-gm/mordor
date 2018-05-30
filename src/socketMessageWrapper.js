@@ -13,7 +13,6 @@ const events = require("events");
 class socketMessageWrapper extends events {
     constructor() {
         super();
-        this.setMaxListeners(100);
         this.clients = new Set();
     }
 

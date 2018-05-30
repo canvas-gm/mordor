@@ -16,6 +16,6 @@ function writeMessage(title, body) {
     });
     client.write(Buffer.from(data) + "\n");
 }
-writeMessage("hello", {
+writeMessage("authentication", {
     foo: "bar"
 });
