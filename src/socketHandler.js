@@ -17,7 +17,7 @@ process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
  * @param {*} socket
  */
 function socketHandler(socket) {
-    socketEvents.clients.add(socket);
+    socketEvents.currConnectedSockets.add(socket);
 
     Reflect.set(socket, "id", uuid());
     console.log(green(`New socket client (id: ${socket.id}) connected!`));
@@ -36,7 +36,7 @@ function socketHandler(socket) {
 
     // Define handler to apply when socket receive a close or error event
     function socketClose() {
-        if (!socketEvents.clients.has(socket)) {
+        if (!socketEvents.currConnectedSockets.has(socket)) {
             return;
         }
         console.log(yellow(`Socket client (id: ${socket.id}) has been disconnected!`));

@@ -8,30 +8,32 @@ const events = require("events");
  * @class socketMessageWrapper
  * @extends events
  *
- * @property {Set} clients
- * @property {Map<String, any>} servers
+ * @property {Set} currConnectedSockets
+ * @property {Map<String, RemoteClient>} clients
+ * @property {Map<String, RemoteServer>} servers
  */
 class socketMessageWrapper extends events {
     constructor() {
         super();
-        this.clients = new Set();
+        this.currConnectedSockets = new Set();
+        this.clients = new Map();
         this.servers = new Map();
     }
 
     /**
      * @public
-     * @method broadcast
+     * @method broadcastAll
      * @desc Broadcast a message to all connected socket clients!
      * @memberof socketMessageWrapper#
      * @param {!String} title Message title
      * @param {*} body Data to send (if any)
      * @returns {void}
      */
-    broadcast(title, body = {}) {
+    broadcastAll(title, body = {}) {
         if (!is.string(title)) {
             throw new TypeError("title argument should be typeof string");
         }
-        for (const socket of this.clients) {
+        for (const socket of this.currConnectedSockets) {
             this.send(socket, title, body);
         }
     }
@@ -47,7 +49,7 @@ class socketMessageWrapper extends events {
      * @returns {void}
      */
     send(socket, title, body) {
-        if (!this.clients.has(socket)) {
+        if (!this.currConnectedSockets.has(socket)) {
             throw new Error("Unable to find socket on the client list!");
         }
         if (!is.string(title)) {
@@ -65,7 +67,7 @@ class socketMessageWrapper extends events {
      * @returns {void}
      */
     disconnectAllSockets() {
-        for (const socket of this.clients) {
+        for (const socket of this.currConnectedSockets) {
             socket.destroy("Internal server error (disconnected from network)");
         }
 

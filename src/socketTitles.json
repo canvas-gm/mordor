@@ -1,3 +1,5 @@
 {
-    "authentication": "authentication"
+    "authentication": "authentication",
+    "registerProject": "registerProject",
+    "getProjects": "getProjects"
 }

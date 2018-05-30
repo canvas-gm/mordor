@@ -3,9 +3,10 @@ const { readdirSync } = require("fs");
 const { join, extname, basename } = require("path");
 
 // Require internal Dependencies
-const socketMessageWrapper = require("./socketMessageWrapper");
+const socketMessageWrapper = require("./core/socketMessageWrapper.class.js");
 
 // Require Third-party Dependencies
+const is = require("@sindresorhus/is");
 const { red, green, blue } = require("chalk");
 
 // Require events name

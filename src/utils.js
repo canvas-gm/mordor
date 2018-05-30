@@ -42,6 +42,21 @@ function parseSocketMessages(msg) {
     return ret;
 }
 
+/**
+ * @exports utils/getSocketAddr
+ * @func getSocketAddr
+ * @desc Get the socket addr with ip:port
+ * @param {*} socket
+ * @returns {String}
+ */
+function getSocketAddr(socket) {
+    if (is.nullOrUndefined(socket)) {
+        throw new TypeError("socket argument cannot be undefined or null!");
+    }
+    return `${socket.remoteAddress}:${socket.remotePort}`;
+}
+
 module.exports = {
-    parseSocketMessages
+    parseSocketMessages,
+    getSocketAddr
 };
