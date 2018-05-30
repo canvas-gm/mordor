@@ -9,11 +9,13 @@ const events = require("events");
  * @extends events
  *
  * @property {Set} clients
+ * @property {Map<String, any>} servers
  */
 class socketMessageWrapper extends events {
     constructor() {
         super();
         this.clients = new Set();
+        this.servers = new Map();
     }
 
     /**

@@ -27,6 +27,10 @@ for (const file of files) {
 
     try {
         const handler = require(join(eventsDir, file));
+        if (is.nullOrUndefined(handler)) {
+            throw new Error(`Undefined script export for file ${file}`);
+        }
+
         const fileBaseName = basename(file, fileExt);
         let eventName = fileBaseName;
 

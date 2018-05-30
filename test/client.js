@@ -17,5 +17,5 @@ function writeMessage(title, body) {
     client.write(Buffer.from(data) + "\n");
 }
 writeMessage("authentication", {
-    foo: "bar"
+    type: "server"
 });
