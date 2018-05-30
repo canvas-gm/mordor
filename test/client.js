@@ -6,7 +6,7 @@ const client = net.connect({port: 1337}, () => {
 
 client.on("data", (data) => {
     console.log("data received!");
-    console.log(JSON.parse(data));
+    console.log(JSON.parse(JSON.stringify(data.toString(), null, 4)));
 });
 
 function writeMessage(title, body) {
@@ -17,5 +17,15 @@ function writeMessage(title, body) {
     client.write(Buffer.from(data) + "\n");
 }
 writeMessage("authentication", {
-    type: "server"
+    type: "server",
+    name: "Test serv!"
 });
+setTimeout(() => {
+    writeMessage("registerProject", {
+        name: "Test project",
+        description: "A test project!"
+    });
+}, 100);
+setTimeout(() => {
+    writeMessage("getProjects", {});
+}, 200);

@@ -10,15 +10,23 @@ class RemoteProject {
 
     /**
      * @constructor
-     * @param {!String} name project name
-     * @param {String=} description project description
+     * @param {Object} options
+     * @param {!String} options.name project name
+     * @param {String=} options.description project description
      */
-    constructor(name, description = "") {
+    constructor({ name, description } = {}) {
         this.id = uuid();
         this.name = name;
         this.description = description;
-        this.protected = false;
-        this.onlineClients = 0;
+    }
+
+    valueOf() {
+        return {
+            name: this.name,
+            description: this.description
+        }
     }
 
 }
+
+module.exports = RemoteProject;

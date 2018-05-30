@@ -15,12 +15,23 @@ function registerProject(socket, options) {
         return;
     }
 
-    const remoteServer = this.servers.get(addr);
-    remoteServer.projects.set(
-        options.name,
-        new RemoteProject(options.name, options.description)
-    );
+    try {
+        const remoteServer = this.servers.get(addr);
+        if (remoteServer.projects.has(name)) {
+            throw new Error(`Project with name ${name} has been already registered!`);
+        }
 
+        const project = new RemoteProject(options);
+        remoteServer.projects.set(name, project);
+
+        this.broadcastAll("registerProject", {
+            from: remoteServer.name,
+            project: project.valueOf()
+        });
+    }
+    catch(error) {
+        this.send(socket, "registerProject", { error });
+    }
 }
 
 module.exports = registerProject;
