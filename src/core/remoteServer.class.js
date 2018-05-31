@@ -14,9 +14,9 @@ class RemoteServer {
 
     /**
      * @constructor
-     * @param {*} socket
-     * @param {Object} options
-     * @param {!String} options.name
+     * @param {*} socket Node.JS Socket
+     * @param {Object} options options
+     * @param {!String} options.name server name!
      */
     constructor(socket, { name }) {
         this.uid = uuid();

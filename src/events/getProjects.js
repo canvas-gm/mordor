@@ -1,7 +1,8 @@
 /**
  * @func getProjects
  * @desc Return the complete list of registered projects!
- * @param {*} socket
+ * @param {*} socket Node.JS Socket
+ * @returns {any}
  */
 function getProjects(socket) {
     const ret = {};
@@ -9,7 +10,7 @@ function getProjects(socket) {
     for (const remoteServer of this.servers.values()) {
         Reflect.set(ret, remoteServer.name, {
             id: remoteServer.id,
-            projects: [...remoteServer.projects.values()].map(v => v.valueOf())
+            projects: [...remoteServer.projects.values()].map((val) => val.valueOf())
         });
     }
 

@@ -36,7 +36,7 @@ for (const file of files) {
         });
         socketEvents.on(fileBaseName, handler.bind(socketEvents));
     }
-    catch(error) {
+    catch (error) {
         console.error(red(`Failed to load event file ${file}`));
         console.error(red(error));
     }

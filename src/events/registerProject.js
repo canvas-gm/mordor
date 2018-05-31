@@ -5,8 +5,9 @@ const RemoteProject = require("../core/remoteProject.class");
 /**
  * @func registerProject
  * @desc Register a new project for a given authenticated server
- * @param {*} socket
- * @param {*} options
+ * @param {*} socket Node.JS Net socket
+ * @param {*} options Method options
+ * @returns {any}
  */
 function registerProject(socket, options) {
     // Return if the socket is not authenticated as Server!
@@ -29,7 +30,7 @@ function registerProject(socket, options) {
             project: project.valueOf()
         });
     }
-    catch(error) {
+    catch (error) {
         this.send(socket, "registerProject", { error });
     }
 }

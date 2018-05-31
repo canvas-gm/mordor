@@ -10,7 +10,7 @@ class RemoteProject {
 
     /**
      * @constructor
-     * @param {Object} options
+     * @param {Object} options options
      * @param {!String} options.name project name
      * @param {String=} options.description project description
      */
@@ -20,11 +20,15 @@ class RemoteProject {
         this.description = description;
     }
 
+    /**
+     * @method valueOf
+     * @returns {Object}
+     */
     valueOf() {
         return {
             name: this.name,
             description: this.description
-        }
+        };
     }
 
 }

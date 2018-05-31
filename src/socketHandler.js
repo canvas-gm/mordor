@@ -14,7 +14,8 @@ process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
 /**
  * @func socketHandler
  * @desc Main socket handler!
- * @param {*} socket
+ * @param {net.Socket} socket Node.JS Socket
+ * @returns {void}
  */
 function socketHandler(socket) {
     socketEvents.currConnectedSockets.add(socket);

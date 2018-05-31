@@ -7,7 +7,7 @@ class RemoteClient {
 
     /**
      * @constructor
-     * @param {*} socket
+     * @param {*} socket Node.JS Socket
      */
     constructor(socket) {
         this.socket = socket;

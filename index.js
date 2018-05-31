@@ -5,13 +5,10 @@ const {
     constants: { R_OK }
 } = require("fs");
 const { createServer } = require("net");
-const http = require("http");
 const { promisify } = require("util");
 
 // Require Third-party Dependencies
 const { blue } = require("chalk");
-const is = require("@sindresorhus/is");
-const polka = require("polka");
 
 // Require internal Modules
 const socketHandler = require("./src/socketHandler");
@@ -21,11 +18,12 @@ const httpServer = require("./src/httpServer");
 const fsAsync = {
     writeFile: promisify(writeFile),
     access: promisify(access)
-}
+};
 
 /**
  * @func main
  * @desc Main handler
+ * @returns {Promise<void>}
  */
 async function main() {
     // Require userconfig (or default config).
@@ -34,7 +32,7 @@ async function main() {
         await fsAsync.access("./config/defaultconfig.json", R_OK);
         config = require("./config/customconfig.json");
     }
-    catch {
+    catch (error) {
         config = require("./config/defaultconfig.json");
         await fsAsync.writeFile(
             "./config/customconfig.json",

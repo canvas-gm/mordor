@@ -16,6 +16,10 @@ const events = require("events");
  * @property {Map<String, RemoteServer>} servers
  */
 class socketMessageWrapper extends events {
+
+    /**
+     * @constructor
+     */
     constructor() {
         super();
         this.currConnectedSockets = new Set();
@@ -46,7 +50,7 @@ class socketMessageWrapper extends events {
      * @method removeSocket
      * @desc Remove a socket (if exist!)
      * @memberof socketMessageWrapper#
-     * @param {*} socket
+     * @param {*} socket Node.JS Net socket
      * @returns {Boolean}
      */
     removeSocket(socket) {
@@ -65,9 +69,9 @@ class socketMessageWrapper extends events {
      * @method send
      * @desc Send a message to a given socket!
      * @memberof socketMessageWrapper#
-     * @param {*} socket
-     * @param {!String} title
-     * @param {Object=} body
+     * @param {*} socket Node.JS Net socket
+     * @param {!String} title message title
+     * @param {Object=} body message body
      * @returns {void}
      */
     send(socket, title, body) {
@@ -78,7 +82,7 @@ class socketMessageWrapper extends events {
             throw new TypeError("title argument should be a string!");
         }
         const data = JSON.stringify({ title, body });
-        socket.write(Buffer.from(data + "\n"));
+        socket.write(Buffer.from(`${data}\n`));
     }
 
     /**

@@ -1,7 +1,8 @@
 {
     "env": {
         "es6": true,
-        "node": true
+        "node": true,
+        "browser": true
     },
     "parserOptions": {
         "ecmaVersion": 8,
@@ -73,7 +74,7 @@
         "no-implicit-coercion": "error",
         "no-implicit-globals": "error",
         "no-implied-eval": "error",
-        "no-invalid-this": "error",
+        "no-invalid-this": "off",
         "no-lone-blocks": "error",
         "no-loop-func": "off",
         "no-multi-spaces": "error",

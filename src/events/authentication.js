@@ -7,10 +7,13 @@ const authenticationType = new Set(["server", "client"]);
 /**
  * @func authentication
  * @desc Authentication handler
- * @param {*} socket
- * @param {*} options
+ * @param {*} socket Node.JS Socket
+ * @param {*} options Method options
+ * @returns {any}
  */
 function authentication(socket, options) {
+    const type = options.type;
+    delete options.type;
     if (!authenticationType.has(type)) {
         return this.send(socket, "authentication", {
             error: `Unknow type ${type}, valid types are: ${[...authenticationType].join(',')}`
@@ -28,16 +31,15 @@ function authentication(socket, options) {
         });
     }
 
-    const type = options.type;
-    delete options.type;
     if (type === "server") {
         try {
             this.servers.set(addr, new RemoteServer(socket, options));
+
             return this.send(socket, "authentication", {
                 error: null
             });
         }
-        catch(error) {
+        catch (error) {
             return this.send(socket, "authentication", { error });
         }
     }

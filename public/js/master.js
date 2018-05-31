@@ -1,8 +1,7 @@
-document.addEventListener("DOMContentLoaded", function dom(){
-
+document.addEventListener("DOMContentLoaded", function dom() {
     const registerForm = document.getElementById("registerForm");
-    registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+    registerForm.addEventListener("submit", function submit(event) {
+        event.preventDefault();
         console.log("form submitted");
 
         // TODO Fetch data

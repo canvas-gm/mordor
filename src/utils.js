@@ -4,7 +4,7 @@
  */
 
 // Require Third-party Dependencies
-const { red } = require("chalk")
+const { red } = require("chalk");
 const is = require("@sindresorhus/is");
 
 /**
@@ -32,7 +32,7 @@ function parseSocketMessages(msg) {
             }
             ret.push({ title: data.title, body: data.body || {} });
         }
-        catch(error) {
+        catch (error) {
             console.error(red("Failed to parse the following socket message:"));
             console.error(red(error));
             continue;
@@ -46,13 +46,14 @@ function parseSocketMessages(msg) {
  * @exports utils/getSocketAddr
  * @func getSocketAddr
  * @desc Get the socket addr with ip:port
- * @param {*} socket
+ * @param {*} socket Node.JS Socket
  * @returns {String}
  */
 function getSocketAddr(socket) {
     if (is.nullOrUndefined(socket)) {
         throw new TypeError("socket argument cannot be undefined or null!");
     }
+
     return `${socket.remoteAddress}:${socket.remotePort}`;
 }
 
