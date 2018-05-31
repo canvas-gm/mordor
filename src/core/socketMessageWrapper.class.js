@@ -1,3 +1,6 @@
+// Require Internal Modules
+const { getSocketAddr } = require("../utils");
+
 // Require Third-party Dependencies
 const is = require("@sindresorhus/is");
 
@@ -51,8 +54,8 @@ class socketMessageWrapper extends events {
             return false;
         }
         this.currConnectedSockets.delete(socket);
-        this.clients.delete(socket);
-        this.servers.delete(socket);
+        this.clients.delete(socket.id);
+        this.servers.delete(getSocketAddr(socket));
 
         return true;
     }
