@@ -10,7 +10,7 @@ const authenticationType = new Set(["server", "client"]);
  * @param {*} socket
  * @param {*} options
  */
-function authentication(socket, { type, name }) {
+function authentication(socket, options) {
     if (!authenticationType.has(type)) {
         return this.send(socket, "authentication", {
             error: `Unknow type ${type}, valid types are: ${[...authenticationType].join(',')}`
@@ -28,11 +28,18 @@ function authentication(socket, { type, name }) {
         });
     }
 
+    const type = options.type;
+    delete options.type;
     if (type === "server") {
-        this.servers.set(addr, new RemoteServer(socket, name));
-        return this.send(socket, "authentication", {
-            error: null
-        });
+        try {
+            this.servers.set(addr, new RemoteServer(socket, options));
+            return this.send(socket, "authentication", {
+                error: null
+            });
+        }
+        catch(error) {
+            return this.send(socket, "authentication", { error });
+        }
     }
     else {
         // Authenticate client! (check in DB for login/password)

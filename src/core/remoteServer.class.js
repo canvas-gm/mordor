@@ -7,21 +7,23 @@ const uuid = require("uuid/v4");
  *
  * @property {Map} projects
  * @property {*} socket
- * @property {String} name
- * @property {String} id
+ * @property {String} name Project name
+ * @property {String} uid Project unique id!
  */
 class RemoteServer {
 
     /**
      * @constructor
      * @param {*} socket
-     * @param {!String} name
+     * @param {Object} options
+     * @param {!String} options.name
      */
-    constructor(socket, name) {
-        this.id = uuid();
+    constructor(socket, { name }) {
+        this.uid = uuid();
         this.name = name;
         this.socket = socket;
         this.projects = new Map();
+        this.registeredNumbers = 0;
     }
 
 }
