@@ -8,6 +8,8 @@ $ npm install
 $ npm start
 ```
 
+On the first start the server should generate a `customconfig.json` in the /config directory. Use it to configure the server like you want (and dont touch defaultconfig.json).
+
 ## TODO
 
 - Create an HTTP server that allow to create an account !
