@@ -11,10 +11,11 @@ const { promisify } = require("util");
 // Require Third-party Dependencies
 const { blue } = require("chalk");
 const is = require("@sindresorhus/is");
+const polka = require("polka");
 
 // Require internal Modules
 const socketHandler = require("./src/socketHandler");
-const httpHandler = require("./src/httpHandler");
+const httpServer = require("./src/httpServer");
 
 // FS Async wrapper
 const fsAsync = {
@@ -50,11 +51,8 @@ async function main() {
         console.log(blue(`Socket server is listening on port ${config.port}`));
     });
 
-    // Declare HTTP Server!
-    const httpServer = http.createServer(httpHandler);
-    httpServer.listen(process.env.httpPort || config.httpPort);
-    httpServer.on("error", console.error);
-    httpServer.on("listening", () => {
+    // Let the http server listen the right port
+    httpServer.listen(process.env.httpPort || config.httpPort).then(() => {
         console.log(blue(`HTTP server is listening on port ${config.httpPort}`));
     });
 }
