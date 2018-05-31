@@ -14,8 +14,8 @@ class RemoteProject {
      * @param {!String} options.name project name
      * @param {String=} options.description project description
      */
-    constructor({ name, description } = {}) {
-        this.id = uuid();
+    constructor({ uid, name, description } = {}) {
+        this.id = uid || uuid();
         this.name = name;
         this.description = description;
     }
