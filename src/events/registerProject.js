@@ -25,10 +25,12 @@ function registerProject(socket, options) {
         const project = new RemoteProject(options);
         remoteServer.projects.set(name, project);
 
-        this.broadcastAll("registerProject", {
-            from: remoteServer.name,
-            project: project.valueOf()
-        });
+        for (const cSock of this.clients.values()) {
+            this.send(cSock, "registerProject", {
+                from: remoteServer.name,
+                project: project.valueOf()
+            });
+        }
     }
     catch (error) {
         this.send(socket, "registerProject", { error });
