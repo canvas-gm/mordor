@@ -16,4 +16,17 @@ function writeMessage(title, body = {}) {
     });
     client.write(Buffer.from(`${data}\n`));
 }
-writeMessage("getProjects");
+
+writeMessage("authentication", {
+    type: "server",
+    name: "Test serv!"
+});
+setTimeout(() => {
+    writeMessage("registerProject", {
+        name: "Test project",
+        description: "A test project!"
+    });
+}, 100);
+setTimeout(() => {
+    writeMessage("getProjects", {});
+}, 200);

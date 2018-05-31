@@ -2,6 +2,9 @@
 const { getSocketAddr } = require("../utils");
 const RemoteProject = require("../core/remoteProject.class");
 
+// Require Third-party dependencies
+const { red } = require("chalk");
+
 /**
  * @func registerProject
  * @desc Register a new project for a given authenticated server
@@ -17,6 +20,7 @@ function registerProject(socket, options) {
     }
 
     try {
+        const { name } = options;
         const remoteServer = this.servers.get(addr);
         if (remoteServer.projects.has(name)) {
             throw new Error(`Project with name ${name} has been already registered!`);
@@ -25,7 +29,7 @@ function registerProject(socket, options) {
         const project = new RemoteProject(options);
         remoteServer.projects.set(name, project);
 
-        for (const cSock of this.clients.values()) {
+        for (const cSock of this.currConnectedSockets) {
             this.send(cSock, "registerProject", {
                 from: remoteServer.uid,
                 project: project.valueOf()
