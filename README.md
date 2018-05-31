@@ -1,7 +1,5 @@
 # mordor
 CGM Mordor tower
 
-- Fix double server disconnection handler
-- Add redis cache
-- Be able to identify a server (and the projects).
+- Be able to identify a server (and the projects). -> Server side ?
 - Work on the client authentication with rethinkdb
