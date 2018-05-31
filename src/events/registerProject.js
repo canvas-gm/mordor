@@ -2,9 +2,6 @@
 const { getSocketAddr } = require("../utils");
 const RemoteProject = require("../core/remoteProject.class");
 
-// Require Third-party dependencies
-const { red } = require("chalk");
-
 /**
  * @func registerProject
  * @desc Register a new project for a given authenticated server
