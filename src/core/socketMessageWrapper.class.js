@@ -40,6 +40,25 @@ class socketMessageWrapper extends events {
 
     /**
      * @public
+     * @method removeSocket
+     * @desc Remove a socket (if exist!)
+     * @memberof socketMessageWrapper#
+     * @param {*} socket
+     * @returns {Boolean}
+     */
+    removeSocket(socket) {
+        if (!this.currConnectedSockets.has(socket)) {
+            return false;
+        }
+        this.currConnectedSockets.delete(socket);
+        this.clients.delete(socket);
+        this.servers.delete(socket);
+
+        return true;
+    }
+
+    /**
+     * @public
      * @method send
      * @desc Send a message to a given socket!
      * @memberof socketMessageWrapper#
