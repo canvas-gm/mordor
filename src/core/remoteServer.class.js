@@ -16,14 +16,22 @@ class RemoteServer {
      * @constructor
      * @param {*} socket Node.JS Socket
      * @param {Object} options options
+     * @param {String=} options.uid server unique id
      * @param {!String} options.name server name!
      */
-    constructor(socket, { name }) {
-        this.uid = uuid();
+    constructor(socket, { uid, name }) {
+        this.uid = uid || uuid();
         this.name = name;
         this.socket = socket;
         this.projects = new Map();
         this.registeredNumbers = 0;
+    }
+
+    /**
+     * @property {String} id
+     */
+    get id() {
+        return this.uid;
     }
 
 }

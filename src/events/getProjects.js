@@ -9,7 +9,7 @@ function getProjects(socket) {
 
     for (const remoteServer of this.servers.values()) {
         Reflect.set(ret, remoteServer.name, {
-            id: remoteServer.id,
+            id: remoteServer.uid,
             projects: [...remoteServer.projects.values()].map((val) => val.valueOf())
         });
     }

@@ -27,7 +27,7 @@ function registerProject(socket, options) {
 
         for (const cSock of this.clients.values()) {
             this.send(cSock, "registerProject", {
-                from: remoteServer.name,
+                from: remoteServer.uid,
                 project: project.valueOf()
             });
         }
