@@ -9,9 +9,6 @@ const socketMessageWrapper = require("./core/socketMessageWrapper.class.js");
 const is = require("@sindresorhus/is");
 const { red, green, blue } = require("chalk");
 
-// Require events name
-const socketEventsName = require("./socketTitles.json");
-
 // Create the events container
 const socketEvents = new socketMessageWrapper();
 socketEvents.on("error", console.error);
@@ -31,19 +28,13 @@ for (const file of files) {
         if (is.nullOrUndefined(handler)) {
             throw new Error(`Undefined script export for file ${file}`);
         }
-
         const fileBaseName = basename(file, fileExt);
-        let eventName = fileBaseName;
-
-        if (Reflect.has(socketEventsName, fileBaseName)) {
-            eventName = Reflect.get(socketEventsName, fileBaseName);
-        }
 
         console.log(green(`Loading socket event :: ${eventName}`));
-        socketEvents.on(eventName, (socket) => {
+        socketEvents.on(fileBaseName, (socket) => {
             console.log(blue(`Event ${eventName} triggered by socket ${socket.id}`));
         });
-        socketEvents.on(eventName, handler.bind(socketEvents));
+        socketEvents.on(fileBaseName, handler.bind(socketEvents));
     }
     catch(error) {
         console.error(red(`Failed to load event file ${file}`));
