@@ -30,9 +30,9 @@ for (const file of files) {
         }
         const fileBaseName = basename(file, fileExt);
 
-        console.log(green(`Loading socket event :: ${eventName}`));
+        console.log(green(`Loading socket event :: ${fileBaseName}`));
         socketEvents.on(fileBaseName, (socket) => {
-            console.log(blue(`Event ${eventName} triggered by socket ${socket.id}`));
+            console.log(blue(`Event ${fileBaseName} triggered by socket ${socket.id}`));
         });
         socketEvents.on(fileBaseName, handler.bind(socketEvents));
     }

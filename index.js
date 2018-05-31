@@ -5,6 +5,7 @@ const {
     constants: { R_OK }
 } = require("fs");
 const { createServer } = require("net");
+const http = require("http");
 const { promisify } = require("util");
 
 // Require Third-party Dependencies
@@ -13,6 +14,7 @@ const is = require("@sindresorhus/is");
 
 // Require internal Modules
 const socketHandler = require("./src/socketHandler");
+const httpHandler = require("./src/httpHandler");
 
 // FS Async wrapper
 const fsAsync = {
@@ -40,11 +42,20 @@ async function main() {
         console.log("New custom-config properly created in /config directory!");
     }
 
+    // Declare socket server!
     const socketServer = createServer(socketHandler);
     socketServer.listen(process.env.port || config.port);
     socketServer.on("error", console.error);
     socketServer.on("listening", () => {
         console.log(blue(`Socket server is listening on port ${config.port}`));
+    });
+
+    // Declare HTTP Server!
+    const httpServer = http.createServer(httpHandler);
+    httpServer.listen(process.env.httpPort || config.httpPort);
+    httpServer.on("error", console.error);
+    httpServer.on("listening", () => {
+        console.log(blue(`HTTP server is listening on port ${config.httpPort}`));
     });
 }
 main().catch(console.error);
