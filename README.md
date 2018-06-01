@@ -18,3 +18,5 @@ On the first start the server should generate a `customconfig.json` in the /conf
 - Work on a global socket tchat
 - Allow to filter on getProjects socket command.
 - Expose some JSON Articles with a REST endpoint
+- Add tests with coverage
+- Rework JSDoc to get a complete documentation badge
