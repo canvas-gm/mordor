@@ -1,14 +1,17 @@
 // Require Node.JS Dependencies
 const {
     writeFile,
+    readFile,
     access,
     constants: { R_OK }
 } = require("fs");
 const { createServer } = require("net");
+const { join } = require("path");
 const { promisify } = require("util");
 
 // Require Third-party Dependencies
-const { blue } = require("chalk");
+const { blue, green } = require("chalk");
+const sqlite = require("sqlite");
 
 // Require internal Modules
 const socketHandler = require("./src/socketHandler");
@@ -17,6 +20,7 @@ const httpServer = require("./src/httpServer");
 // FS Async wrapper
 const fsAsync = {
     writeFile: promisify(writeFile),
+    readFile: promisify(readFile),
     access: promisify(access)
 };
 
@@ -39,7 +43,19 @@ async function main() {
             JSON.stringify(config, null, 2)
         );
         console.log("New custom-config properly created in /config directory!");
+        process.exit(0);
     }
+
+    // Create DB
+    const dbDir = join(__dirname, "db");
+    const db = await sqlite.open(join(dbDir, "storage.sqlite"));
+    const query = (
+        await fsAsync.readFile(join(dbDir, "createdb.sql"))
+    ).toString();
+    await db.run(query);
+    process.once("SIGINT", db.close.bind(db));
+    process.once("exit", db.close.bind(db));
+    console.log(green("Successfully initialized SQLiteDB!"));
 
     // Declare socket server!
     const socketServer = createServer(socketHandler);

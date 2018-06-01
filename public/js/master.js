@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function dom() {
         req.open("POST", "/register", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(JSON.stringify({
-            nom: document.getElementById("formNom").value,
+            login: document.getElementById("formLogin").value,
             email: document.getElementById("formEmail").value,
             password: document.getElementById("formPassword").value,
             password2: document.getElementById("formPassword2").value

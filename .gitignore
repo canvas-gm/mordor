@@ -62,3 +62,4 @@ typings/
 
 config/customconfig.json
 docs/
+db/storage.sqlite

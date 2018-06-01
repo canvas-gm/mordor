@@ -64,19 +64,19 @@ httpServer.post("/register", async function register(req, res) {
     if (is.nullOrUndefined(req.body)) {
         return res.json({ error: "Form body not defined in the request!" });
     }
-    const { nom = "", email = "", password, password2 } = req.body;
+    const { login = "", email = "", password, password2 } = req.body;
     let error;
 
     // Check and sanatize form data!
     formCheck: {
         // Check for undefined or null fields
-        if ([nom, email, password].every((field) => is.nullOrUndefined(field) === true)) {
+        if ([login, email, password].every((field) => is.nullOrUndefined(field) === true)) {
             error = "One field has been detected as null or undefined!";
             break formCheck;
         }
 
-        if (!isAlphanumeric(nom) || !isLength(nom, { min: 2, max: 50 })) {
-            error = "The field nom should be Alphanumeric and contain between 2 and 50 characters!";
+        if (!isAlphanumeric(login) || !isLength(login, { min: 2, max: 50 })) {
+            error = "The field login should be Alphanumeric and contain between 2 and 50 characters!";
             break formCheck;
         }
 
