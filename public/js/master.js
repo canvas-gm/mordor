@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", function dom() {
         req.send(JSON.stringify({
             nom: document.getElementById("formNom").value,
             email: document.getElementById("formEmail").value,
-            password: document.getElementById("formPassword").value
+            password: document.getElementById("formPassword").value,
+            password2: document.getElementById("formPassword2").value
         }));
     });
 });

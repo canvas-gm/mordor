@@ -57,7 +57,40 @@ function getSocketAddr(socket) {
     return `${socket.remoteAddress}:${socket.remotePort}`;
 }
 
+/**
+ * @exports utils/getRandomIntInRange
+ * @func getRandomIntInRange
+ * @desc Get random integer in a range of min and max
+ * @param {!Number} min minimum in range
+ * @param {!Number} max maximum in range
+ * @returns {Number}
+ */
+function getRandomIntInRange(min = 0, max = 10) {
+    const [rmin, rmax] = [Math.min(min, max), Math.max(min, max)];
+
+    return Math.floor(Math.random() * (rmax - rmin + 1)) + rmin;
+}
+
+/**
+ * @exports utils/generateToken
+ * @func generateToken
+ * @desc Generate a random token (used for email validation).
+ * @param {!Number} length token length
+ * @returns {String}
+ */
+function generateToken(length = 8) {
+    const charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const token = "";
+    for (let index = 0; index < length; index++) {
+        token.concat(charset.charAt(getRandomIntInRange(0, charset.length - 1)));
+    }
+
+    return token;
+}
+
 module.exports = {
     parseSocketMessages,
-    getSocketAddr
+    getSocketAddr,
+    generateToken,
+    getRandomIntInRange
 };

@@ -21,12 +21,14 @@
   "homepage": "https://github.com/canvas-gm/mordor#readme",
   "dependencies": {
     "@sindresorhus/is": "^0.9.0",
+    "argon2": "^0.19.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
     "polka": "^0.4.0",
     "serve-static": "^1.13.2",
     "sqlite3": "^4.0.0",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "validator": "^10.2.0"
   },
   "devDependencies": {
     "@types/node": "^10.3.0",
