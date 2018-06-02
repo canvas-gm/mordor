@@ -7,19 +7,19 @@ const uuid = require("uuid/v4");
 const socketEvents = require("./socketEvents");
 const { parseSocketMessages } = require("./utils");
 
-// Globals
+// MODULE CONSTANTS
+/**
+ * @const MAX_REQUESTS_PER_SECOND
+ * @desc Maximum number of requests per second that a remote socket can burst
+ * @type {Number}
+ */
 const MAX_REQUESTS_PER_SECOND = 30;
 
-// Close every sockets properly on critical error(s)
+/**
+ * Close every sockets properly on critical error(s)
+ */
 process.once("SIGINT", socketEvents.disconnectAllSockets.bind(socketEvents));
 process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
-
-// Reset all sockets handle every second!
-setInterval(() => {
-    for (const socket of socketEvents.currConnectedSockets) {
-        socket.handle = 0;
-    }
-}, 1000);
 
 /**
  * @func socketHandler
@@ -30,29 +30,45 @@ setInterval(() => {
 function socketHandler(socket) {
     socketEvents.currConnectedSockets.add(socket);
 
+    // Set new parameters on curr socket
     Reflect.set(socket, "id", uuid());
-    Reflect.set(socket, "handle", 0);
-    console.log(green(`New socket client (id: ${socket.id}) connected!`));
+    Reflect.set(socket, "requestCount", 0);
+    console.log(green(`New socket client (id: ${yellow(socket.id)}) connected!`));
 
-    // Data handler!
-    socket.on("data", function socketDataHandler(msg) {
-        if (socket.handle >= MAX_REQUESTS_PER_SECOND) {
-            return socketEvents.removeSocket(socket);
-        }
-        socket.handle++;
+    /**
+     * @func socketDataHandler
+     * @param {!Buffer} msg Socket (buffer) message
+     * @returns {void}
+     */
+    function socketDataHandler(msg) {
         if (is.nullOrUndefined(msg)) {
-            return void 0;
+            return;
         }
+
+        // Disconnect remote socket if max requests has been reach!
+        const requestCount = Reflect.get(socket, "requestCount");
+        if (requestCount >= MAX_REQUESTS_PER_SECOND) {
+            socketEvents.removeSocket(socket);
+
+            return;
+        }
+        Reflect.set(socket, "requestCount", requestCount + 1);
+
+        // Parse and send message to the event container (wrapper).
         const messages = parseSocketMessages(msg.toString());
-
-        for (const { title, body = {} } of messages) {
-            socketEvents.emit(title, socket, body);
+        for (const msg of messages) {
+            socketEvents.emit(msg.title, socket, msg.body);
         }
 
-        return void 0;
-    });
+        return;
+    }
+    socket.on("data", socketDataHandler);
 
-    // Define handler to apply when socket receive a close or error event
+    /**
+     * @func socketClose
+     * @desc Define handler to apply when socket receive a close or error event
+     * @returns {void}
+     */
     function socketClose() {
         if (!socketEvents.removeSocket(socket)) {
             return;
@@ -63,4 +79,14 @@ function socketHandler(socket) {
     socket.on("error", socketClose);
 }
 
+/**
+ * Reset all sockets requestCount to 0 every seconds!
+ */
+setInterval(function resetSocketRequestCount() {
+    for (const socket of socketEvents.currConnectedSockets) {
+        Reflect.set(socket, "requestCount", 0);
+    }
+}, 1000);
+
+// Export socket function handler
 module.exports = socketHandler;
