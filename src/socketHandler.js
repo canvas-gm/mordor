@@ -1,3 +1,6 @@
+// Require Node.JS Dependencies
+const net = require("net");
+
 // Require Third-party Dependencies
 const { green, yellow } = require("chalk");
 const is = require("@sindresorhus/is");
