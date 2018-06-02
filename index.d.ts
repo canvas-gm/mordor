@@ -79,6 +79,14 @@ declare namespace Mordor {
         public disconnectAllSockets(): void;
     }
 
+    /**
+     * Project configuration
+     */
+    export interface Configuration {
+        port: number;
+        httpPort: number;
+    }
+
 }
 
 declare global {
