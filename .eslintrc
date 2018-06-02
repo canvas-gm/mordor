@@ -180,7 +180,7 @@
             }
         ],
         "lines-around-comment": [
-            "error",
+            "off",
             {
                 "beforeBlockComment": true
             }

@@ -16,7 +16,7 @@ const is = require("@sindresorhus/is");
  * @func parseSocketMessages
  * @desc Parse socket messages
  * @param {!String} msg complete message string or buffer
- * @returns {Object[]}
+ * @returns {SocketMessage[]}
  */
 function parseSocketMessages(msg) {
     const ret = [];
@@ -30,11 +30,12 @@ function parseSocketMessages(msg) {
         }
 
         try {
-            const data = JSON.parse(line);
-            if (!is.string(data.title)) {
+            /** @type {SocketMessage} */
+            const sockMessage = JSON.parse(line);
+            if (!is.string(sockMessage.title)) {
                 throw new TypeError("title field of socket message should be a string!");
             }
-            ret.push({ title: data.title, body: data.body || {} });
+            ret.push({ title: sockMessage.title, body: sockMessage.body || {} });
         }
         catch (error) {
             console.error(red("Failed to parse the following socket message:"));
@@ -52,6 +53,8 @@ function parseSocketMessages(msg) {
  * @desc Get the socket addr with ip:port
  * @param {*} socket Node.JS Socket
  * @returns {String}
+ *
+ * @throws {TypeError}
  */
 function getSocketAddr(socket) {
     if (is.nullOrUndefined(socket)) {
@@ -64,21 +67,24 @@ function getSocketAddr(socket) {
 /**
  * @exports utils/getJavaScriptFiles
  * @func getJavaScriptFiles
- * @param {!String} dirname directory where files are
+ * @desc Get all javascript files name from a given directory path
+ * @param {!String} directoryPath directory where files are
  * @returns {String[]}
+ *
+ * @throws {TypeError}
  */
-function getJavaScriptFiles(dirname) {
-    if (!is.string(dirname)) {
+function getJavaScriptFiles(directoryPath) {
+    if (!is.string(directoryPath)) {
         throw new TypeError("dirname argument should be a string");
     }
     const ret = [];
 
-    const files = readdirSync(dirname);
+    const files = readdirSync(directoryPath);
     for (const file of files) {
         if (extname(file) !== ".js") {
             continue;
         }
-        ret.push(join(dirname, file));
+        ret.push(join(directoryPath, file));
     }
 
     return ret;
