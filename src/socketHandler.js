@@ -41,13 +41,15 @@ function socketHandler(socket) {
         }
         socket.handle++;
         if (is.nullOrUndefined(msg)) {
-            return;
+            return void 0;
         }
         const messages = parseSocketMessages(msg.toString());
 
         for (const { title, body = {} } of messages) {
             socketEvents.emit(title, socket, body);
         }
+
+        return void 0;
     });
 
     // Define handler to apply when socket receive a close or error event
