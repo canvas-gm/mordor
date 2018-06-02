@@ -7,9 +7,19 @@ const uuid = require("uuid/v4");
 const socketEvents = require("./socketEvents");
 const { parseSocketMessages } = require("./utils");
 
+// Globals
+const MAX_REQUESTS_PER_SECOND = 30;
+
 // Close every sockets properly on critical error(s)
 process.once("SIGINT", socketEvents.disconnectAllSockets.bind(socketEvents));
 process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
+
+// Reset all sockets handle every second!
+setInterval(() => {
+    for (const socket of socketEvents.currConnectedSockets) {
+        socket.handle = 0;
+    }
+}, 1000);
 
 /**
  * @func socketHandler
@@ -21,16 +31,21 @@ function socketHandler(socket) {
     socketEvents.currConnectedSockets.add(socket);
 
     Reflect.set(socket, "id", uuid());
+    Reflect.set(socket, "handle", 0);
     console.log(green(`New socket client (id: ${socket.id}) connected!`));
 
     // Data handler!
     socket.on("data", function socketDataHandler(msg) {
+        if (socket.handle >= MAX_REQUESTS_PER_SECOND) {
+            return socketEvents.removeSocket(socket);
+        }
+        socket.handle++;
         if (is.nullOrUndefined(msg)) {
             return;
         }
         const messages = parseSocketMessages(msg.toString());
 
-        for (const { title, body } of messages) {
+        for (const { title, body = {} } of messages) {
             socketEvents.emit(title, socket, body);
         }
     });
