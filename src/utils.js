@@ -3,6 +3,10 @@
  * @desc Utils functions
  */
 
+// Require Node.JS Dependencies
+const { readdirSync } = require("fs");
+const { extname, join } = require("path");
+
 // Require Third-party Dependencies
 const { red } = require("chalk");
 const is = require("@sindresorhus/is");
@@ -88,9 +92,33 @@ function generateToken(length = 8) {
     return token;
 }
 
+/**
+ * @exports utils/getJavaScriptFiles
+ * @func getJavaScriptFiles
+ * @param {!String} dirname directory where files are
+ * @returns {String[]}
+ */
+function getJavaScriptFiles(dirname) {
+    if (!is.string(dirname)) {
+        throw new TypeError("dirname argument should be a string");
+    }
+    const ret = [];
+
+    const files = readdirSync(dirname);
+    for (const file of files) {
+        if (extname(file) !== ".js") {
+            continue;
+        }
+        ret.push(join(dirname, file));
+    }
+
+    return ret;
+}
+
 module.exports = {
     parseSocketMessages,
     getSocketAddr,
     generateToken,
-    getRandomIntInRange
+    getRandomIntInRange,
+    getJavaScriptFiles
 };
