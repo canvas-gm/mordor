@@ -54,8 +54,7 @@ function socketHandler(socket) {
 
     // Define handler to apply when socket receive a close or error event
     function socketClose() {
-        const ret = socketEvents.removeSocket(socket);
-        if (ret === false) {
+        if (!socketEvents.removeSocket(socket)) {
             return;
         }
         console.log(yellow(`Socket client (id: ${socket.id}) has been disconnected!`));
