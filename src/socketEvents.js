@@ -14,7 +14,7 @@ const socketEvents = new socketMessageWrapper();
 socketEvents.on("error", console.error);
 
 // Require all .js file in the /events dir
-const eventsDir = join(__dirname, "events");
+const eventsDir = join(__dirname, "sockets");
 const files = readdirSync(eventsDir);
 for (const file of files) {
     // Skip if extension doesn't match .js
