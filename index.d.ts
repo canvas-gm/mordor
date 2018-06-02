@@ -1,7 +1,6 @@
+/// <reference types="node" />
 /// <reference types="@types/node" />
 /// <reference types="@types/es6-shim" />
-
-import * as events from "events";
 import * as net from "net";
 
 declare namespace Mordor {
@@ -72,7 +71,7 @@ declare namespace Mordor {
     /**
      * socketMessageWrapper
      */
-    export class socketMessageWrapper extends events {
+    export class socketMessageWrapper {
         constructor();
 
         // Properties
