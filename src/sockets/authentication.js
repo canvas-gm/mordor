@@ -1,22 +1,40 @@
+// Require Internal Modules
 const { getSocketAddr } = require("../utils");
-const RemoteServer = require("../core/remoteServer.class");
+/** @type {Mordor.RemoteServer} */
+const RemoteServer = require("../class/remoteServer");
 
-// All available authentication types
+/**
+ * @const authenticationType
+ * @desc All available authentication types
+ * @type {Set<String>}
+ */
 const authenticationType = new Set(["server", "client"]);
+
+/**
+ * @func getKnowTypes
+ * @desc Return the list (as string) of know authentication types
+ * @param {!String} [separator=","] types separator
+ * @returns {String}
+ */
+function getKnowTypes(separator = ",") {
+    return [...authenticationType].join(separator);
+}
 
 /**
  * @func authentication
  * @desc Authentication handler
- * @param {*} socket Node.JS Socket
+ * @param {net.Socket} socket Node.JS Socket
  * @param {*} options Method options
  * @returns {any}
+ *
+ * @this {Mordor.socketMessageWrapper}
  */
 function authentication(socket, options) {
     const type = options.type;
     delete options.type;
     if (!authenticationType.has(type)) {
         return this.send(socket, "authentication", {
-            error: `Unknow type ${type}, valid types are: ${[...authenticationType].join(',')}`
+            error: `Unknow type ${type}, valid types are: ${getKnowTypes()}`
         });
     }
 
@@ -45,6 +63,7 @@ function authentication(socket, options) {
     }
     else {
         // Authenticate client! (check in DB for login/password)
+        return void 0;
     }
 }
 

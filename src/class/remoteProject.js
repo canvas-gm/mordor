@@ -1,0 +1,45 @@
+// Require Third-party Dependencies
+const uuid = require("uuid/v4");
+const is = require("@sindresorhus/is");
+
+/**
+ * @class RemoteProject
+ * @desc A remote project (part of a remote server).
+ */
+class RemoteProject {
+
+    /**
+     * @constructor
+     * @param {Object} options options
+     * @param {!String} options.uid Unique project id
+     * @param {!String} options.name Project name
+     * @param {String=} options.description Project description
+     *
+     * @throws {TypeError}
+     */
+    constructor({ uid = uuid(), name, description = "" } = {}) {
+        if (!is.string(name)) {
+            throw new TypeError("A project should be defined and typeof string!");
+        }
+
+        this.uid = uid;
+        this.name = name;
+        this.description = description;
+    }
+
+    /**
+     * @public
+     * @method valueOf
+     * @desc Return the project as a native JS Object!
+     * @returns {Object}
+     */
+    valueOf() {
+        return {
+            name: this.name,
+            description: this.description
+        };
+    }
+
+}
+
+module.exports = RemoteProject;

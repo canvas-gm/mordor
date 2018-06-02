@@ -1,13 +1,14 @@
 /**
  * @class RemoteClient
+ * @desc A remote (authenticated) socket client!
  *
- * @property {any} socket
+ * @property {net.Socket} socket
  */
 class RemoteClient {
 
     /**
      * @constructor
-     * @param {*} socket Node.JS Socket
+     * @param {net.Socket} socket Node.JS Socket
      */
     constructor(socket) {
         this.socket = socket;

@@ -1,5 +1,6 @@
-// Require Node.JS Dependencies
 require("make-promises-safe");
+
+// Require Node.JS Dependencies
 const {
     writeFile,
     readFile,

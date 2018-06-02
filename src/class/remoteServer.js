@@ -1,5 +1,6 @@
 // Require Third-party Dependencies
 const uuid = require("uuid/v4");
+const is = require("@sindresorhus/is");
 
 /**
  * @class RemoteServer
@@ -19,19 +20,16 @@ class RemoteServer {
      * @param {String=} options.uid server unique id
      * @param {!String} options.name server name!
      */
-    constructor(socket, { uid, name }) {
-        this.uid = uid || uuid();
+    constructor(socket, { uid = uuid(), name }) {
+        if (!is.string(name)) {
+            throw new TypeError("A (valid) server name is required!");
+        }
+
+        this.uid = uid;
         this.name = name;
         this.socket = socket;
         this.projects = new Map();
         this.registeredNumbers = 0;
-    }
-
-    /**
-     * @property {String} id
-     */
-    get id() {
-        return this.uid;
     }
 
 }

@@ -15,6 +15,8 @@ const httpServer = polka();
 
 // Serve static assets into root /public directory!
 httpServer.use(serv(join(__dirname, "../public")));
+
+// Parse HTTP form JSON body
 httpServer.use(bodyParser.json());
 
 // Add json method to response!

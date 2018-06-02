@@ -2,7 +2,7 @@
  * @func getProjects
  * @desc Return the complete list of registered projects!
  * @param {*} socket Node.JS Socket
- * @returns {any}
+ * @returns {void}
  */
 function getProjects(socket) {
     const ret = {};

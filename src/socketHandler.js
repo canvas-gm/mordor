@@ -1,12 +1,10 @@
-// Require Node.JS Dependencies
-const net = require("net");
-
 // Require Third-party Dependencies
 const { green, yellow } = require("chalk");
 const is = require("@sindresorhus/is");
 const uuid = require("uuid/v4");
 
 // Require Internal Dependencies
+/** @type {Mordor.socketMessageWrapper} */
 const socketEvents = require("./socketEvents");
 const { parseSocketMessages } = require("./utils");
 

@@ -16,7 +16,7 @@ const is = require("@sindresorhus/is");
  * @func parseSocketMessages
  * @desc Parse socket messages
  * @param {!String} msg complete message string or buffer
- * @returns {SocketMessage[]}
+ * @returns {Mordor.SocketMessage[]}
  */
 function parseSocketMessages(msg) {
     const ret = [];
@@ -30,7 +30,7 @@ function parseSocketMessages(msg) {
         }
 
         try {
-            /** @type {SocketMessage} */
+            /** @type {Mordor.SocketMessage} */
             const sockMessage = JSON.parse(line);
             if (!is.string(sockMessage.title)) {
                 throw new TypeError("title field of socket message should be a string!");

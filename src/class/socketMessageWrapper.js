@@ -11,9 +11,9 @@ const events = require("events");
  * @class socketMessageWrapper
  * @extends events
  *
- * @property {Set} currConnectedSockets
- * @property {Map<String, RemoteClient>} clients
- * @property {Map<String, RemoteServer>} servers
+ * @property {Set<net.Socket>} currConnectedSockets
+ * @property {Map<String, Mordor.RemoteClient>} clients
+ * @property {Map<String, Mordor.RemoteServer>} servers
  */
 class socketMessageWrapper extends events {
 
@@ -33,13 +33,14 @@ class socketMessageWrapper extends events {
      * @desc Broadcast a message to all connected socket clients!
      * @memberof socketMessageWrapper#
      * @param {!String} title Message title
-     * @param {*} body Data to send (if any)
+     * @param {Mordor.SocketMessage} body Data to send (if any)
      * @returns {void}
      */
     broadcastAll(title, body = {}) {
         if (!is.string(title)) {
             throw new TypeError("title argument should be typeof string");
         }
+
         for (const socket of this.currConnectedSockets) {
             this.send(socket, title, body);
         }
@@ -71,16 +72,17 @@ class socketMessageWrapper extends events {
      * @memberof socketMessageWrapper#
      * @param {*} socket Node.JS Net socket
      * @param {!String} title message title
-     * @param {Object=} body message body
+     * @param {Mordor.SocketMessage} [body={}] message body
      * @returns {void}
      */
-    send(socket, title, body) {
+    send(socket, title, body = {}) {
         if (!this.currConnectedSockets.has(socket)) {
             throw new Error("Unable to find socket on the client list!");
         }
         if (!is.string(title)) {
             throw new TypeError("title argument should be a string!");
         }
+
         const data = JSON.stringify({ title, body });
         socket.write(Buffer.from(`${data}\n`));
     }
@@ -98,9 +100,7 @@ class socketMessageWrapper extends events {
         }
 
         // Exit node at the next event-loop iteration
-        setImmediate(() => {
-            process.exit(0);
-        });
+        setImmediate(process.exit);
     }
 
 }

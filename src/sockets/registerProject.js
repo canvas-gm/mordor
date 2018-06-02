@@ -1,6 +1,7 @@
 // Require Internal Modules
 const { getSocketAddr } = require("../utils");
-const RemoteProject = require("../core/remoteProject.class");
+/** @type {Mordor.RemoteProject} */
+const RemoteProject = require("../class/remoteProject");
 
 /**
  * @func registerProject
