@@ -13,9 +13,6 @@ const {
 const sqlite = require("sqlite");
 const uuid = require("uuid/v4");
 
-// Require Internal Dependencies
-const { generateToken } = require("../utils");
-
 // Globals
 const RePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,50}$/;
 const dbDir = join(__dirname, "../../db");
