@@ -1,4 +1,7 @@
-/// <reference types="node" />
+/// <reference types="@types/node" />
+/// <reference types="@types/es6-shim" />
+
+import * as events from "events";
 import * as net from "net";
 
 declare namespace Mordor {
@@ -15,6 +18,11 @@ declare namespace Mordor {
         uid: string;
         name: string;
         description: string;
+    }
+
+    export interface ServerOptions {
+        uid: string;
+        name: string;
     }
 
     export interface NativeProjectValue {
@@ -51,7 +59,7 @@ declare namespace Mordor {
      * RemoteServer
      */
     export class RemoteServer {
-        constructor(socket: net.Socket, { uid: string, name: string });
+        constructor(socket: net.Socket, options: ServerOptions);
 
         // Properties
         public socket: net.Socket;
@@ -87,10 +95,6 @@ declare namespace Mordor {
         httpPort: number;
     }
 
-}
-
-declare global {
-    const net: net;
 }
 
 export as namespace Mordor;
