@@ -1,17 +1,18 @@
 // Require Node.JS Dependencies
 const { join } = require("path");
+const { createHmac } = require("crypto");
 
 // Require third-party Dependencies
 const { blue } = require("chalk");
 const is = require("@sindresorhus/is");
-const argon = require("argon2");
+const nodemailer = require("nodemailer");
 const {
     isAlphanumeric,
     isEmail,
     isLength
 } = require("validator");
-const sqlite = require("sqlite");
 const uuid = require("uuid/v4");
+const Datastore = require("nedb-promises");
 
 // Globals
 const RePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,50}$/;
@@ -69,50 +70,54 @@ async function registerAccount(req, res) {
     }
 
     // Hash the password!
-    const hashedPassword = await argon.hash(password);
+    const hashedPassword = createHmac("sha256", "secret").update(password).digest("hex");
 
-    // Open SQLite database
-    const db = await sqlite.open(join(dbDir, "storage.sqlite"), {
-        verbose: true,
-        promise: Promise
+    const db = Datastore.create(join(dbDir, "storage.db"));
+    await db.load();
+    const docs = await db.find({ email, password: hashedPassword });
+    if (docs.length > 0) {
+        return res.json({ error: "Your email is already used!" });
+    }
+
+    // Insert user in DB
+    await db.insert({
+        email,
+        password: hashedPassword,
+        token: uuid(),
+        active: true,
+        registeredAt: new Date()
     });
-    console.log("successfully connected to the local db");
 
-    try {
-        const matchedUserAccount = await db.all(
-            "SELECT * FROM users WHERE email = $email and password = $password",
-            {
-                $email: email,
-                $password: hashedPassword
-            }
-        );
-        console.log(matchedUserAccount);
-        if (!is.nullOrUndefined(matchedUserAccount) && matchedUserAccount.length > 0) {
-            return res.json({
-                error: "Your email is already used for an another account!"
-            });
-        }
+    // Send email
+    // const transporter = nodemailer.createTransport({
+    //     host: "smtp.ethereal.email",
+    //     port: 587,
+    //     secure: false,
+    //     auth: {
+    //         user: account.user,
+    //         pass: account.pass
+    //     }
+    // });
 
-        // Create entry with the token (for email validation).
-        const token = uuid();
-        console.log(`token: ${token}`);
-        const stmt = await db.run(
-            "INSERT INTO users (login, email, password, token) VALUES (?, ?, ?, ?)",
-            [login, email, hashedPassword, token]
-        );
-        if (stmt.changes !== 1) {
-            throw new Error("Failed to insert new user!");
-        }
-        await db.close();
+    // // setup email data with unicode symbols
+    // const mailOptions = {
+    //     from: "\"Fred Foo 👻\" <foo@example.com>",
+    //     to: "bar@example.com, baz@example.com",
+    //     subject: "Hello ✔",
+    //     text: "Hello world?",
+    //     html: "<b>Hello world?</b>"
+    // };
 
-        // TODO: Send Email
-        return res.json({ error: null });
-    }
-    catch (error) {
-        console.error(error);
+    // // send mail with defined transport object
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //     if (error) {
+    //         return console.log(error);
+    //     }
+    //     console.log("Message sent: %s", info.messageId);
+    //     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    // });
 
-        return res.json({ error });
-    }
+    return res.json({ error: null });
 }
 
 // Export route

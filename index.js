@@ -12,8 +12,7 @@ const { join } = require("path");
 const { promisify } = require("util");
 
 // Require Third-party Dependencies
-const { blue, green, yellow } = require("chalk");
-const sqlite = require("sqlite");
+const { blue, yellow } = require("chalk");
 
 // Require Internal Modules
 const socketHandler = require("./src/socketHandler");
@@ -53,29 +52,6 @@ async function initializeConfiguration() {
 
 /**
  * @async
- * @func initializeSQLiteDB
- * @desc initialize SQLite DB with default tables
- * @returns {Promise<void>}
- */
-async function initializeSQLiteDB() {
-    const dbDir = join(__dirname, "db");
-
-    // Open DB
-    const db = await sqlite.open(join(dbDir, "storage.sqlite"));
-
-    // Load initialize Query and execute it
-    const query = (
-        await fsAsync.readFile(join(dbDir, "createdb.sql"))
-    ).toString();
-    await db.run(query);
-
-    // Close DB and log successfull state!
-    await db.close();
-    console.log(green("SQLite database successfully created!"));
-}
-
-/**
- * @async
  * @func main
  * @desc Main handler
  * @returns {Promise<void>}
@@ -83,9 +59,6 @@ async function initializeSQLiteDB() {
 async function main() {
     // Load server configuration
     const config = await initializeConfiguration();
-
-    // Initialize SQLiteDB
-    await initializeSQLiteDB();
 
     // Initialize Socket Server
     const socketServer = createServer(socketHandler);
