@@ -26,24 +26,23 @@ body {
     align-items: center;
     justify-content: center;
     font-family: Roboto;
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#917250+0,656053+100 */
-    background: rgb(145,114,80); /* Old browsers */
-    background: -moz-radial-gradient(center, ellipse cover, rgba(145,114,80,1) 0%, rgba(101,96,83,1) 100%); /* FF3.6-15 */
-    background: -webkit-radial-gradient(center, ellipse cover, rgba(145,114,80,1) 0%,rgba(101,96,83,1) 100%); /* Chrome10-25,Safari5.1-6 */
-    background: radial-gradient(ellipse at center, rgba(145,114,80,1) 0%,rgba(101,96,83,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#917250', endColorstr='#656053',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#cfd8dc+0,90a4ae+100 */
+    background: rgb(207,216,220); /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover, rgba(207,216,220,1) 0%, rgba(144,164,174,1) 100%); /* FF3.6-15 */
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(207,216,220,1) 0%,rgba(144,164,174,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: radial-gradient(ellipse at center, rgba(207,216,220,1) 0%,rgba(144,164,174,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cfd8dc', endColorstr='#90a4ae',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     font-size: 14px;
 }
 
 body > main {
     width: 500px;
     padding: 10px;
-    border: 2px solid rgb(101, 96, 83);
+    border: 2px solid #607D8B;
     padding: 2px;
     background: #FFF;
     display: flex;
     border-radius: 4px;
-    box-shadow: 1px 1px 15px rgba(139, 109, 48, 0.4);
 }
 
 body > main > section._inner {
@@ -55,7 +54,7 @@ body > main > section._inner {
 }
 
 h1 {
-    color: rgb(69, 65, 57);
+    color: #546E7A;
     padding-bottom: 5px;
     border-bottom: 2px solid rgb(101, 96, 83, 0.2);
 }
@@ -84,21 +83,21 @@ form input {
     padding: 0 10px;
     border: 2px solid rgb(101, 96, 83, 0.35);
     border-radius: 4px;
-    color: rgb(143, 108, 23);
+    color: #607D8B;
     font-weight: bold;
     font-family: Roboto;
     letter-spacing: 1px;
 }
 
 form input[type="submit"] {
-    background: rgb(225, 178, 45);
-    border: 2px solid rgb(143, 108, 23);
-    color: #3E2723;
+    background: #CFD8DC;
+    border: 2px solid #78909C;
+    color: #263238;
     width: 150px;
     align-self: flex-end;
     transition: linear all 0.2s;
 }
 form input[type="submit"]:hover {
     cursor: pointer;
-    background: #FDD835;
+    background: #FFF176;
 }
