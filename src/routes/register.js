@@ -11,6 +11,7 @@ const {
     isLength
 } = require("validator");
 const sqlite = require("sqlite");
+const uuid = require("uuid/v4");
 
 // Require Internal Dependencies
 const { generateToken } = require("../utils");
@@ -22,7 +23,6 @@ const dbDir = join(__dirname, "../../db");
 // Route
 async function registerAccount(req, res) {
     console.log(blue("HTTP Register URI has been hit!"));
-    console.log(req.body);
 
     // Assign top variables
     if (is.nullOrUndefined(req.body)) {
@@ -71,31 +71,51 @@ async function registerAccount(req, res) {
         return res.json({ error });
     }
 
+    // Hash the password!
     const hashedPassword = await argon.hash(password);
-    console.log(hashedPassword);
 
-    const db = await sqlite.open(join(dbDir, "storage.sqlite"));
-    let ret = await db.run(
-        "SELECT * FROM users WHERE email=? and password=?",
-        [email, hashedPassword]
-    );
-    if (ret.length > 0) {
-        return res.json({ error: "Your email is already used for an another account!" });
+    // Open SQLite database
+    const db = await sqlite.open(join(dbDir, "storage.sqlite"), {
+        verbose: true,
+        promise: Promise
+    });
+    console.log("successfully connected to the local db");
+
+    try {
+        const matchedUserAccount = await db.all(
+            "SELECT * FROM users WHERE email = $email and password = $password",
+            {
+                $email: email,
+                $password: hashedPassword
+            }
+        );
+        console.log(matchedUserAccount);
+        if (!is.nullOrUndefined(matchedUserAccount) && matchedUserAccount.length > 0) {
+            return res.json({
+                error: "Your email is already used for an another account!"
+            });
+        }
+
+        // Create entry with the token (for email validation).
+        const token = uuid();
+        console.log(`token: ${token}`);
+        const stmt = await db.run(
+            "INSERT INTO users (login, email, password, token) VALUES (?, ?, ?, ?)",
+            [login, email, hashedPassword, token]
+        );
+        if (stmt.changes !== 1) {
+            throw new Error("Failed to insert new user!");
+        }
+        await db.close();
+
+        // TODO: Send Email
+        return res.json({ error: null });
     }
+    catch (error) {
+        console.error(error);
 
-    // Create entry with the token (for email validation).
-    const token = generateToken();
-    ret = await db.run(
-        "INSERT INTO users (login, email, password, token) VALUES (?, ?, ?, ?)",
-        [login, email, password, token]
-    );
-    console.log(ret);
-
-    await db.close();
-
-
-    // TODO: Send Email
-    return res.json({ error: null });
+        return res.json({ error });
+    }
 }
 
 // Export route
