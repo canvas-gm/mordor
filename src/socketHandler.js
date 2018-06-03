@@ -17,6 +17,13 @@ const { parseSocketMessages } = require("./utils");
 const MAX_REQUESTS_PER_SECOND = 30;
 
 /**
+ * @const PONG_TIMEOUT
+ * @desc Ping/Pong TIMEOUT
+ * @type {Number}
+ */
+const PONG_TIMEOUT = 5000;
+
+/**
  * Close every sockets properly on critical error(s)
  */
 process.once("SIGINT", socketEvents.disconnectAllSockets.bind(socketEvents));
@@ -53,6 +60,7 @@ function socketHandler(socket) {
     Reflect.set(socket, "id", uuid());
     Reflect.set(socket, "requestCount", 0);
     Reflect.set(socket, "isAuthenticated", isAuthenticated);
+    Reflect.set(socket, "pongDt", new Date().getTime());
     console.log(green(`New socket client (id: ${yellow(socket.id)}) connected!`));
 
     /**
@@ -107,6 +115,26 @@ setInterval(function resetSocketRequestCount() {
         Reflect.set(socket, "requestCount", 0);
     }
 }, 1000);
+
+/**
+ * Ping all remote sockets to be sure they are alive.
+ */
+setInterval(function pingRemoteSocket() {
+    const startDatePing = new Date().getTime();
+    for (const socket of socketEvents.currConnectedSockets) {
+        socketEvents.send(socket, "ping", {
+            dt: startDatePing
+        });
+    }
+    setTimeout(function checkPong() {
+        for (const socket of socketEvents.currConnectedSockets) {
+            const lastPingDT = Reflect.get(socket, "pongDt");
+            if (lastPingDT !== startDatePing) {
+                socketEvents.removeSocket(socket);
+            }
+        }
+    }, PONG_TIMEOUT);
+}, 60000);
 
 // Export socket function handler
 module.exports = socketHandler;
