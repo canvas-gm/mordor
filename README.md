@@ -18,8 +18,6 @@ The project has been designed to work with a local database. If more performance
 
 - Work on authentication by sending an email with a token!
 - Allow to filter on getProjects socket command.
-- Add argon2 hash for the password (instead of temporary sha512 hMac)
-- Improve events wrapper class
 - Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).
 
 ## Issues
