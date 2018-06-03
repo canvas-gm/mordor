@@ -16,6 +16,7 @@ The project has been designed to work with a local database. If more performance
 
 ## Roadmap
 
+- Add a ping/pong mechanism to verify if remote socket is alive!
 - Work on authentication by sending an email with a token!
 - Allow to filter on getProjects socket command.
 - Add argon2 hash for the password (instead of temporary sha512 hMac)
