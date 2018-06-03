@@ -41,7 +41,12 @@ async function checkUserRegistration(email, password) {
     await db.load();
 
     // Query to find user by matching login!
-    const docs = await db.find({ email, password, active: true });
+    const query = {
+        email,
+        active: true,
+        password: createHmac("sha512", "secret").update(password).digest("hex")
+    };
+    const docs = await db.find(query);
     if (docs.length === 0) {
         throw new Error(`Unable to found any valid account with email ${email}`);
     }
