@@ -12,8 +12,6 @@ On the first start the server should generate a `customconfig.json` in the /conf
 
 ## Roadmap
 
-- Add an interval to clean unvalided account every 24hours...
-- Work on the socket client authentication with SQLite
+- Work on authentication by sending an email with a token!
 - Allow to filter on getProjects socket command.
 - Add tests with coverage
-- Rework JSDoc to get a complete documentation badge

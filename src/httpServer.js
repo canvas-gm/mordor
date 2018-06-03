@@ -10,7 +10,7 @@ const { blue, yellow } = require("chalk");
 // Require Internal Dependencies
 const { getJavaScriptFiles } = require("./utils");
 
-// Create polka server
+// Create polka (HTTP) server
 const httpServer = polka();
 
 // Serve static assets into root /public directory!
@@ -19,7 +19,9 @@ httpServer.use(serv(join(__dirname, "../public")));
 // Parse HTTP form JSON body
 httpServer.use(bodyParser.json());
 
-// Add json method to response!
+/**
+ * Add a custom middleware function to response JSON body
+ */
 httpServer.use(function json(req, res, next) {
     res.json = function resJson(payload) {
         res.writeHead(200, { "Content-Type": "application/json" });
@@ -29,7 +31,9 @@ httpServer.use(function json(req, res, next) {
     next();
 });
 
-// Load JavaScript modules
+/**
+ * Load all HTTP Modules contained in the /routes directory
+ */
 const routes = getJavaScriptFiles(join(__dirname, "routes")).map(require);
 for (const { method = "get", uri = "/", handler } of routes) {
     console.log(blue(`Loading HTTP Route :: (${yellow(method)}) ${uri}`));

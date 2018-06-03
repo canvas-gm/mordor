@@ -12,7 +12,13 @@ const view = viewRenderer(join(__dirname, "../../views"), {
     disableCache: true
 });
 
-// Handler
+/**
+ * @func root
+ * @desc Return the website root with the index view
+ * @param {*} req HTTP Request
+ * @param {*} res HTTP Response
+ * @returns {void}
+ */
 async function root(req, res) {
     console.log(blue("HTTP Root URI has ben hit!"));
     res.writeHead(200, {

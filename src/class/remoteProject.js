@@ -23,7 +23,9 @@ class RemoteProject {
         }
 
         this.uid = uid;
+        /** @type {String} */
         this.name = name;
+        /** @type {String} */
         this.description = description;
     }
 
@@ -31,7 +33,7 @@ class RemoteProject {
      * @public
      * @method valueOf
      * @desc Return the project as a native JS Object!
-     * @returns {Object}
+     * @returns {Mordor.NativeProjectValue}
      */
     valueOf() {
         return {

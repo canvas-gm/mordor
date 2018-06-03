@@ -16,7 +16,7 @@ class RemoteServer {
     /**
      * @constructor
      * @param {net.Socket} socket Node.JS Socket
-     * @param {Object} options options
+     * @param {Object=} [options={}] options
      * @param {String=} options.uid server unique id
      * @param {!String} options.name server name!
      */
@@ -26,9 +26,13 @@ class RemoteServer {
         }
 
         this.uid = uid;
+        /** @type {String} */
         this.name = name;
+        /** @type {net.Socket} */
         this.socket = socket;
+        /** @type {Map<String, Mordor.RemoteProject>} */
         this.projects = new Map();
+        /** @type {Number} */
         this.registeredNumbers = 0;
     }
 

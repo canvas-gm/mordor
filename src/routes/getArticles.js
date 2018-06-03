@@ -4,7 +4,13 @@ const { blue } = require("chalk");
 // Require Articles
 const Articles = require("../../data/articles.json");
 
-// Handler
+/**
+ * @func getArticles
+ * @desc Return the complete list of articles
+ * @param {*} req HTTP Request
+ * @param {*} res HTTP Response
+ * @returns {void}
+ */
 function getArticles(req, res) {
     console.log(blue("HTTP articles URI has ben hit!"));
     res.json(Articles);

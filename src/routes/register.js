@@ -18,7 +18,13 @@ const Datastore = require("nedb-promises");
 const RePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,50}$/;
 const dbDir = join(__dirname, "../../db");
 
-// Route
+/**
+ * @func registerAccount
+ * @desc register a new Account on Mordor
+ * @param {*} req HTTP Request
+ * @param {*} res HTTP Response
+ * @returns {void}
+ */
 async function registerAccount(req, res) {
     console.log(blue("HTTP Register URI has been hit!"));
 
