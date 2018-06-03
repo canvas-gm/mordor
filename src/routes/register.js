@@ -1,6 +1,5 @@
 // Require Node.JS Dependencies
 const { join } = require("path");
-const { createHmac } = require("crypto");
 
 // Require third-party Dependencies
 const { blue } = require("chalk");
@@ -13,6 +12,7 @@ const {
 } = require("validator");
 const uuid = require("uuid/v4");
 const Datastore = require("nedb-promises");
+const argon2 = require("argon2");
 
 // Globals
 const RePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,50}$/;
@@ -76,11 +76,14 @@ async function registerAccount(req, res) {
     }
 
     // Hash the password!
-    const hashedPassword = createHmac("sha256", "secret").update(password).digest("hex");
+    const hashedPassword = await argon2.hash(password);
 
+    // Load database
     const db = Datastore.create(join(dbDir, "storage.db"));
     await db.load();
-    const docs = await db.find({ email, password: hashedPassword });
+    const docs = (await db.find({ email })).filter(
+        async(user) => await argon2.verify(user.password, hashedPassword)
+    );
     if (docs.length > 0) {
         return res.json({ error: "Your email is already used!" });
     }

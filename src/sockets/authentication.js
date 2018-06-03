@@ -1,10 +1,10 @@
 // Require Node.JS Dependencies
-const { createHmac } = require("crypto");
 const { join } = require("path");
 
 // Require Third-party dependencies
 const Datastore = require("nedb-promises");
 const is = require("@sindresorhus/is");
+const argon2 = require("argon2");
 
 // Require Internal Modules
 /** @type {Mordor.RemoteClient} */
@@ -40,13 +40,18 @@ async function checkUserRegistration(email, password) {
     const db = Datastore.create(join(dbDir, "storage.db"));
     await db.load();
 
+
+    // Hash password
+    const hashPassword = await argon2.hash(password);
+
     // Query to find user by matching login!
     const query = {
         email,
-        active: true,
-        password: createHmac("sha512", "secret").update(password).digest("hex")
+        active: true
     };
-    const docs = await db.find(query);
+    const docs = (await db.find(query)).filter(
+        async(user) => await argon2.verify(user.password, hashPassword)
+    );
     if (docs.length === 0) {
         throw new Error(`Unable to found any valid account with email ${email}`);
     }

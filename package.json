@@ -22,6 +22,7 @@
   "dependencies": {
     "@sindresorhus/is": "^0.9.0",
     "@types/es6-shim": "^0.31.37",
+    "argon2": "^0.19.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
     "make-promises-safe": "^1.1.0",

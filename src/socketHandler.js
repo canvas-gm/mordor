@@ -1,5 +1,5 @@
 // Require Third-party Dependencies
-const { green, yellow } = require("chalk");
+const { green, yellow, red } = require("chalk");
 const is = require("@sindresorhus/is");
 const uuid = require("uuid/v4");
 
@@ -73,17 +73,19 @@ function socketHandler(socket) {
             return;
         }
 
-        // Disconnect remote socket if max requests has been reach!
-        const requestCount = Reflect.get(socket, "requestCount");
-        if (requestCount >= MAX_REQUESTS_PER_SECOND) {
-            socketEvents.removeSocket(socket);
+        // Parse and send message to the event container (wrapper).
+        const messages = parseSocketMessages(msg.toString());
+
+        // Disconnect remote socket if max requests (messages) has been reach!
+        socket.requestCount += messages.length;
+        if (socket.requestCount >= MAX_REQUESTS_PER_SECOND) {
+            console.error(red(`Threshold of the maximum allowed requests has been hit by socket id: ${socket.id}`));
+            socket.destroy();
 
             return;
         }
-        Reflect.set(socket, "requestCount", requestCount + 1);
 
-        // Parse and send message to the event container (wrapper).
-        const messages = parseSocketMessages(msg.toString());
+        // Handle messages
         for (const msg of messages) {
             socketEvents.emit(msg.title, socket, msg.body);
         }
@@ -120,6 +122,7 @@ setInterval(function resetSocketRequestCount() {
  * Ping all remote sockets to be sure they are alive.
  */
 setInterval(function pingRemoteSocket() {
+    console.log("Starting interval pingRemoteSocket");
     const startDatePing = new Date().getTime();
     for (const socket of socketEvents.currConnectedSockets) {
         socketEvents.send(socket, "ping", {
@@ -130,7 +133,8 @@ setInterval(function pingRemoteSocket() {
         for (const socket of socketEvents.currConnectedSockets) {
             const lastPingDT = Reflect.get(socket, "pongDt");
             if (lastPingDT !== startDatePing) {
-                socketEvents.removeSocket(socket);
+                console.log(red(`Ping/pong timeout for socket with id ${yellow(socket.id)}`));
+                socket.destroy();
             }
         }
     }, PONG_TIMEOUT);
