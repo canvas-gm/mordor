@@ -7,30 +7,44 @@ const Datastore = require("nedb-promises");
 const is = require("@sindresorhus/is");
 
 // Require Internal Modules
-const { getSocketAddr } = require("../utils");
-/** @type {Mordor.RemoteServer} */
-const RemoteServer = require("../class/remoteServer");
 /** @type {Mordor.RemoteClient} */
 const RemoteClient = require("../class/remoteClient");
 
-// Globals
+/**
+ * @const dbDir
+ * @type {String}
+ * @desc Absolute path to the storage (db) directory
+ */
 const dbDir = join(__dirname, "../../db");
 
 /**
- * @const authenticationType
- * @desc All available authentication types
- * @type {Set<String>}
+ * @async
+ * @func checkUserRegistration
+ * @desc Check if the user is registered or not
+ * @param {!String} email email
+ * @param {!String} password password
+ * @returns {Promise<void>}
+ *
+ * @throws {TypeError}
  */
-const authenticationType = new Set(["server", "client"]);
+async function checkUserRegistration(email, password) {
+    // Check field integrity
+    if (!is.string(email)) {
+        throw new TypeError("User email should be a string!");
+    }
+    if (!is.string(password)) {
+        throw new TypeError("User password should be a string!");
+    }
 
-/**
- * @func getKnowTypes
- * @desc Return the list (as string) of know authentication types
- * @param {!String} [separator=","] types separator
- * @returns {String}
- */
-function getKnowTypes(separator = ",") {
-    return [...authenticationType].join(separator);
+    // Load database
+    const db = Datastore.create(join(dbDir, "storage.db"));
+    await db.load();
+
+    // Query to find user by matching login!
+    const docs = await db.find({ email, password, active: true });
+    if (docs.length === 0) {
+        throw new Error(`Unable to found any valid account with email ${email}`);
+    }
 }
 
 /**
@@ -43,48 +57,15 @@ function getKnowTypes(separator = ",") {
  * @this {Mordor.socketMessageWrapper}
  */
 async function authentication(socket, options) {
-    const type = options.type;
-    delete options.type;
-    if (!authenticationType.has(options.type)) {
-        throw new Error(`Unknow type ${type}, valid types are: ${getKnowTypes()}`);
-    }
-
-    // If authentication is for a server!
-    if (type === "server") {
-        const addr = getSocketAddr(socket);
-        if (this.servers.has(addr)) {
-            throw new Error("Server already authenticate (in use)!");
-        }
-        this.servers.set(addr, new RemoteServer(socket, options));
-
-        return { error: null };
-    }
-
-    // If authentication is for a normal client
     if (socket.isAuthenticated()) {
-        throw new Error("You'r already authenticated !");
+        throw new Error("Socket session already authenticated!");
     }
 
-    // Retrieve login and password from options
-    const login = options.login;
-    const password = createHmac("sha256", "secret")
-        .update(options.password)
-        .digest("hex");
+    // Verify if the user is registered!
+    await checkUserRegistration(options.email, options.password);
 
-    if (!is.string(login) || !is.string(password)) {
-        throw new TypeError("login and password should be defined and typeof string");
-    }
-
-    // Open local database
-    const db = Datastore.create(join(dbDir, "storage.db"));
-    await db.load();
-    const docs = await db.find({ login, password, active: true });
-    if (docs.length === 0) {
-        throw new Error(`Unable to found any valid account with login ${login}`);
-    }
-
-    // Save
-    const client = new RemoteClient(socket, login);
+    // Save session on the client and socketEvents!
+    const client = new RemoteClient(socket, options.email);
     this.clients.set(socket.id, client);
     Reflect.set(socket, "session", client);
 
