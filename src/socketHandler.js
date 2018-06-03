@@ -31,9 +31,28 @@ process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
 function socketHandler(socket) {
     socketEvents.currConnectedSockets.add(socket);
 
+    /**
+     * @func isAuthenticated
+     * @desc Verify if the socket client is authenticated!
+     * @returns {boolean}
+     */
+    function isAuthenticated() {
+        /** @type {Mordor.RemoteClient} */
+        const remoteClient = Reflect.get(socket, "session");
+        if (is.nullOrUndefined(remoteClient)) {
+            return false;
+        }
+        if (!remoteClient.isUpToDate()) {
+            socketEvents.removeSocket(socket);
+        }
+
+        return true;
+    }
+
     // Set new parameters on curr socket
     Reflect.set(socket, "id", uuid());
     Reflect.set(socket, "requestCount", 0);
+    Reflect.set(socket, "isAuthenticated", isAuthenticated);
     console.log(green(`New socket client (id: ${yellow(socket.id)}) connected!`));
 
     /**

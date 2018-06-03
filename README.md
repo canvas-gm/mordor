@@ -14,4 +14,4 @@ On the first start the server should generate a `customconfig.json` in the /conf
 
 - Work on authentication by sending an email with a token!
 - Allow to filter on getProjects socket command.
-- Add tests with coverage
+- Add argon2 hash for password!
