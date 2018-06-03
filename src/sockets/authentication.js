@@ -45,74 +45,52 @@ function getKnowTypes(separator = ",") {
 async function authentication(socket, options) {
     const type = options.type;
     delete options.type;
-    if (!authenticationType.has(type)) {
-        return this.send(socket, "authentication", {
-            error: `Unknow type ${type}, valid types are: ${getKnowTypes()}`
-        });
+    if (!authenticationType.has(options.type)) {
+        throw new Error(`Unknow type ${type}, valid types are: ${getKnowTypes()}`);
     }
 
-    // Retrieve socket addr
-    const addr = getSocketAddr(socket);
-    console.log(`Server addr => ${addr}`);
-
-    // Return error if the server is already authenticated (registered).
-    if (this.servers.has(addr)) {
-        return this.send(socket, "authentication", {
-            error: "Server already authenticate (in use)!"
-        });
-    }
-
+    // If authentication is for a server!
     if (type === "server") {
-        try {
-            this.servers.set(addr, new RemoteServer(socket, options));
+        const addr = getSocketAddr(socket);
+        if (this.servers.has(addr)) {
+            throw new Error("Server already authenticate (in use)!");
+        }
+        this.servers.set(addr, new RemoteServer(socket, options));
 
-            return this.send(socket, "authentication", {
-                error: null
-            });
-        }
-        catch (error) {
-            return this.send(socket, "authentication", { error });
-        }
+        return { error: null };
     }
-    else {
-        const isAuthenticated = socket.isAuthenticated();
-        if (isAuthenticated) {
-            return this.send(socket, "authentication", {
-                error: "Already authenticated!"
-            });
-        }
-        try {
 
-            const login = options.login;
-            const password = createHmac("sha256", "secret")
-                .update(options.password)
-                .digest("hex");
-
-            if (!is.string(login) || !is.string(password)) {
-                throw new TypeError("login and password should be defined and typeof string");
-            }
-
-            const db = Datastore.create(join(dbDir, "storage.db"));
-            await db.load();
-            const docs = await db.find({ login, password, active: true });
-            if (docs.length === 0) {
-                throw new Error(`Unable to found any valid account with login ${login}`);
-            }
-
-            // Create (redis?) session
-            const client = new RemoteClient(socket, login);
-            this.clients.set(socket.id, client);
-            Reflect.set(socket, "session", client);
-
-            return this.send(socket, "authentication", {
-                error: null,
-                socketId: socket.id
-            });
-        }
-        catch (error) {
-            return this.send(socket, "authentication", { error });
-        }
+    // If authentication is for a normal client
+    if (socket.isAuthenticated()) {
+        throw new Error("You'r already authenticated !");
     }
+
+    // Retrieve login and password from options
+    const login = options.login;
+    const password = createHmac("sha256", "secret")
+        .update(options.password)
+        .digest("hex");
+
+    if (!is.string(login) || !is.string(password)) {
+        throw new TypeError("login and password should be defined and typeof string");
+    }
+
+    // Open local database
+    const db = Datastore.create(join(dbDir, "storage.db"));
+    await db.load();
+    const docs = await db.find({ login, password, active: true });
+    if (docs.length === 0) {
+        throw new Error(`Unable to found any valid account with login ${login}`);
+    }
+
+    // Save
+    const client = new RemoteClient(socket, login);
+    this.clients.set(socket.id, client);
+    Reflect.set(socket, "session", client);
+
+    return {
+        socketId: socket.id
+    };
 }
 
 module.exports = authentication;

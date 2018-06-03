@@ -14,29 +14,25 @@ function registerProject(socket, options) {
     // Return if the socket is not authenticated as Server!
     const addr = getSocketAddr(socket);
     if (!this.servers.has(addr)) {
-        return;
+        throw new Error("Unknow server. Please authenticate before registering any projects!");
     }
 
-    try {
-        const { name } = options;
-        const remoteServer = this.servers.get(addr);
-        if (remoteServer.projects.has(name)) {
-            throw new Error(`Project with name ${name} has been already registered!`);
-        }
-
-        const project = new RemoteProject(options);
-        remoteServer.projects.set(name, project);
-
-        for (const cSock of this.currConnectedSockets) {
-            this.send(cSock, "registerProject", {
-                from: remoteServer.uid,
-                project: project.valueOf()
-            });
-        }
+    const { name } = options;
+    const remoteServer = this.servers.get(addr);
+    if (remoteServer.projects.has(name)) {
+        throw new Error(`Project with name ${name} has been already registered!`);
     }
-    catch (error) {
-        this.send(socket, "registerProject", { error });
-    }
+
+    const project = new RemoteProject(options);
+    remoteServer.projects.set(name, project);
+
+    const ret = {
+        from: remoteServer.uid,
+        project: project.valueOf()
+    };
+    this.broadcastAll(socket, "registerProject", ret);
+
+    return ret;
 }
 
 module.exports = registerProject;

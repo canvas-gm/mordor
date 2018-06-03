@@ -11,7 +11,7 @@ function generateAccessToken(socket, options) {
     };
 
 
-    this.send(socket, "generateAccessToken", ret);
+    return ret;
 }
 
 module.exports = generateAccessToken;

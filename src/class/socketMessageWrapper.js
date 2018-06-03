@@ -32,17 +32,21 @@ class socketMessageWrapper extends events {
      * @method broadcastAll
      * @desc Broadcast a message to all connected socket clients!
      * @memberof socketMessageWrapper#
+     * @param {net.Socket} socket socket
      * @param {!String} title Message title
      * @param {Mordor.SocketMessage} body Data to send (if any)
      * @returns {void}
      */
-    broadcastAll(title, body = {}) {
+    broadcastAll(socket, title, body = {}) {
         if (!is.string(title)) {
             throw new TypeError("title argument should be typeof string");
         }
 
-        for (const socket of this.currConnectedSockets) {
-            this.send(socket, title, body);
+        for (const currSocket of this.currConnectedSockets) {
+            if (socket && currSocket === socket) {
+                continue;
+            }
+            this.send(currSocket, title, body);
         }
     }
 

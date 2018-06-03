@@ -14,7 +14,7 @@ function getProjects(socket) {
         });
     }
 
-    this.send(socket, "getProjects", ret);
+    return ret;
 }
 
 module.exports = getProjects;
