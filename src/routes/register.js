@@ -89,42 +89,38 @@ async function registerAccount(req, res) {
     }
 
     // Insert user in DB
+    const token = uuid();
     await db.insert({
         email,
         password: hashedPassword,
-        token: uuid(),
-        active: true,
+        token,
+        active: false,
         registeredAt: new Date()
     });
 
-    // Send email
-    // const transporter = nodemailer.createTransport({
-    //     host: "smtp.ethereal.email",
-    //     port: 587,
-    //     secure: false,
-    //     auth: {
-    //         user: account.user,
-    //         pass: account.pass
-    //     }
-    // });
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing
+    const account = await nodemailer.createTestAccount();
 
-    // // setup email data with unicode symbols
-    // const mailOptions = {
-    //     from: "\"Fred Foo 👻\" <foo@example.com>",
-    //     to: "bar@example.com, baz@example.com",
-    //     subject: "Hello ✔",
-    //     text: "Hello world?",
-    //     html: "<b>Hello world?</b>"
-    // };
+    // create reusable transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false,
+        auth: {
+            user: account.user,
+            pass: account.pass
+        }
+    });
 
-    // // send mail with defined transport object
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //     if (error) {
-    //         return console.log(error);
-    //     }
-    //     console.log("Message sent: %s", info.messageId);
-    //     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // });
+    // send mail with defined transport object
+    const info = await transporter.sendMail({
+        from: "\"Thomas GENTILHOMME\" <gentilhomme.thomas@gmail.com>",
+        to: email,
+        subject: "CGM Mordor - Registration email",
+        html: `<b>Registration email, token: ${token}</b>`
+    });
+    console.log(info);
 
     return res.json({ error: null });
 }
