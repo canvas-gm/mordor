@@ -21,9 +21,12 @@ declare namespace Mordor {
         httpPort: number;
     }
 
-    // Mordor socket!
+    /**
+     * Interface (extended from Node.JS Net Socket) with Mordor properties
+     */
     export interface Socket extends net.Socket {
         session?: RemoteClient;
+        serverId: string;
         id: string;
         requestCount: number;
         isAuthenticated: () => boolean;

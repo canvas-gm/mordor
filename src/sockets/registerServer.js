@@ -1,5 +1,4 @@
 // Require Internal Modules
-const { getSocketAddr } = require("../utils");
 /** @type {Mordor.RemoteServer} */
 const RemoteServer = require("../class/remoteServer");
 
@@ -11,11 +10,12 @@ const RemoteServer = require("../class/remoteServer");
  * @returns {void}
  */
 function registerServer(socket, options) {
-    const addr = getSocketAddr(socket);
-    if (this.servers.has(addr)) {
-        throw new Error("Server already authenticate (in use)!");
+    const uid = Reflect.get(options, "uid");
+    if (this.servers.has(uid)) {
+        throw new Error("Server already authentified (currently in use)");
     }
-    this.servers.set(addr, new RemoteServer(socket, options));
+    Reflect.set(socket, "serverId", uid);
+    this.servers.set(uid, new RemoteServer(socket, options));
 
     return { error: null };
 }

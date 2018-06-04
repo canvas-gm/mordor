@@ -4,7 +4,7 @@
  * @param {net.Socket} socket Node.JS Socket
  * @returns {void}
  */
-function getProjects(socket) {
+function getProjects() {
     const ret = {};
 
     for (const remoteServer of this.servers.values()) {

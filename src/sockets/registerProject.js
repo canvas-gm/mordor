@@ -1,5 +1,4 @@
 // Require Internal Modules
-const { getSocketAddr } = require("../utils");
 /** @type {Mordor.RemoteProject} */
 const RemoteProject = require("../class/remoteProject");
 
@@ -12,13 +11,13 @@ const RemoteProject = require("../class/remoteProject");
  */
 function registerProject(socket, options) {
     // Return if the socket is not authenticated as Server!
-    const addr = getSocketAddr(socket);
-    if (!this.servers.has(addr)) {
+    const uid = Reflect.get(socket, "serverId");
+    if (!this.servers.has(uid)) {
         throw new Error("Unknow server. Please authenticate before registering any projects!");
     }
 
     const { name } = options;
-    const remoteServer = this.servers.get(addr);
+    const remoteServer = this.servers.get(uid);
     if (remoteServer.projects.has(name)) {
         throw new Error(`Project with name ${name} has been already registered!`);
     }
