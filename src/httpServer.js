@@ -9,6 +9,12 @@ const { blue, yellow } = require("chalk");
 
 // Require Internal Dependencies
 const { getJavaScriptFiles } = require("./utils");
+const viewRenderer = require("./viewRenderer");
+
+// Create view renderer!
+const render = viewRenderer(join(__dirname, "../views"), {
+    disableCache: true
+});
 
 // Create polka (HTTP) server
 const httpServer = polka();
@@ -27,6 +33,18 @@ httpServer.use(function json(req, res, next) {
         res.writeHead(200, { "Content-Type": "application/json" });
 
         return res.end(JSON.stringify(payload));
+    };
+    next();
+});
+
+/**
+ * Add a custom middleware function to respond HTML view
+ */
+httpServer.use(function view(req, res, next) {
+    res.view = async function resView(viewName) {
+        res.writeHead(200, { "Content-Type": "text/html" });
+
+        return res.end(await render(viewName));
     };
     next();
 });
