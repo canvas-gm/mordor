@@ -122,7 +122,6 @@ setInterval(function resetSocketRequestCount() {
  * Ping all remote sockets to be sure they are alive.
  */
 setInterval(function pingRemoteSocket() {
-    console.log("Starting interval pingRemoteSocket");
     const startDatePing = new Date().getTime();
     for (const socket of socketEvents.currConnectedSockets) {
         socketEvents.send(socket, "ping", {
