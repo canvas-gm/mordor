@@ -37,10 +37,13 @@ for (const file of files) {
         /** @type {(socket, options) => any} */
         const eventBindedHandler = handler.bind(socketEvents);
 
-        socketEvents.on(fileBaseName, async function eventHandler(socket) {
+        socketEvents.on(fileBaseName, async function eventHandler(socket, ...args) {
             console.log(blue(`Event ${fileBaseName} triggered by socket ${socket.id}`));
             try {
-                let ret = await eventBindedHandler();
+                let ret = await eventBindedHandler(socket, ...args);
+                if (fileBaseName === "ping") {
+                    return;
+                }
                 if (is.nullOrUndefined(ret)) {
                     ret = { error: null };
                 }
