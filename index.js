@@ -64,12 +64,12 @@ async function main() {
     const socketServer = createServer(socketHandler);
     socketServer.listen(process.env.port || config.port);
     socketServer.on("error", console.error);
-    socketServer.on("listening", () => {
+    socketServer.on("listening", function socketListen() {
         console.log(blue(`Socket server is listening on port ${yellow(config.port)}`));
     });
 
     // Initialize HTTP Server
-    httpServer.listen(process.env.httpPort || config.httpPort).then(() => {
+    httpServer.listen(process.env.httpPort || config.httpPort).then(function httpListen() {
         console.log(blue(`HTTP server is listening on port ${yellow(config.httpPort)}`));
     });
 }
