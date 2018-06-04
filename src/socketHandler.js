@@ -129,10 +129,10 @@ setInterval(function pingRemoteSocket() {
             dt: startDatePing
         });
     }
+
     setTimeout(function checkPong() {
         for (const socket of socketEvents.currConnectedSockets) {
-            const lastPingDT = Reflect.get(socket, "pongDt");
-            if (lastPingDT !== startDatePing) {
+            if (socket.pongDt !== startDatePing) {
                 console.log(red(`Ping/pong timeout for socket with id ${yellow(socket.id)}`));
                 socket.destroy();
             }
