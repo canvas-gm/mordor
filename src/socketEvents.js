@@ -8,7 +8,7 @@ const { red, green, blue } = require("chalk");
 
 /**
  * @const socketMessageWrapper
- * @type {Mordor.socketMessageWrapper}
+ * @type {SocketMessageWrapper}
  */
 const socketMessageWrapper = require("./class/socketMessageWrapper");
 
@@ -34,7 +34,9 @@ for (const file of files) {
         const fileBaseName = basename(file, fileExt);
 
         console.log(green(`Loading socket event :: ${fileBaseName}`));
+        /** @type {(socket, options) => any} */
         const eventBindedHandler = handler.bind(socketEvents);
+
         socketEvents.on(fileBaseName, async function eventHandler(socket) {
             console.log(blue(`Event ${fileBaseName} triggered by socket ${socket.id}`));
             try {

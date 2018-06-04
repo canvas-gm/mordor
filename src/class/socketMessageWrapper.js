@@ -8,14 +8,14 @@ const is = require("@sindresorhus/is");
 const events = require("events");
 
 /**
- * @class socketMessageWrapper
+ * @class SocketMessageWrapper
  * @extends events
  *
  * @property {Set<net.Socket>} currConnectedSockets
  * @property {Map<String, Mordor.RemoteClient>} clients
  * @property {Map<String, Mordor.RemoteServer>} servers
  */
-class socketMessageWrapper extends events {
+class SocketMessageWrapper extends events {
 
     /**
      * @constructor
@@ -109,4 +109,4 @@ class socketMessageWrapper extends events {
 
 }
 
-module.exports = socketMessageWrapper;
+module.exports = SocketMessageWrapper;

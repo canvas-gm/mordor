@@ -118,6 +118,7 @@ async function registerAccount(req, res) {
         from: "\"Thomas GENTILHOMME\" <gentilhomme.thomas@gmail.com>",
         to: email,
         subject: "CGM Mordor - Registration email",
+        text: `Registration email, token: ${token}`,
         html: `<b>Registration email, token: ${token}</b>`
     });
     console.log(info);

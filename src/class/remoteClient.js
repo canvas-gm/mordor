@@ -9,11 +9,11 @@ class RemoteClient {
     /**
      * @constructor
      * @param {net.Socket} socket Node.JS Socket
-     * @param {!String} login client login
+     * @param {!String} email client email
      */
-    constructor(socket, login) {
+    constructor(socket, email) {
         this.socket = socket;
-        this.login = login;
+        this.email = email;
         this.updatedAt = new Date();
     }
 

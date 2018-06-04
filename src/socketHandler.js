@@ -4,7 +4,7 @@ const is = require("@sindresorhus/is");
 const uuid = require("uuid/v4");
 
 // Require Internal Dependencies
-/** @type {Mordor.socketMessageWrapper} */
+/** @type {SocketMessageWrapper} */
 const socketEvents = require("./socketEvents");
 const { parseSocketMessages } = require("./utils");
 
@@ -32,7 +32,7 @@ process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
 /**
  * @func socketHandler
  * @desc Main socket handler!
- * @param {net.Socket} socket Node.JS Socket
+ * @param {Mordor.Socket} socket Node.JS Socket
  * @returns {void}
  */
 function socketHandler(socket) {
@@ -44,7 +44,7 @@ function socketHandler(socket) {
      * @returns {boolean}
      */
     function isAuthenticated() {
-        /** @type {Mordor.RemoteClient} */
+        /** @type {RemoteClient} */
         const remoteClient = Reflect.get(socket, "session");
         if (is.nullOrUndefined(remoteClient)) {
             return false;

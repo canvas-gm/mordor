@@ -7,7 +7,6 @@ const is = require("@sindresorhus/is");
 const argon2 = require("argon2");
 
 // Require Internal Modules
-/** @type {Mordor.RemoteClient} */
 const RemoteClient = require("../class/remoteClient");
 
 /**
@@ -60,11 +59,11 @@ async function checkUserRegistration(email, password) {
 /**
  * @func authentication
  * @desc Authentication handler
- * @param {net.Socket} socket Node.JS Socket
+ * @param {Mordor.Socket} socket Node.JS Socket
  * @param {*} options Method options
  * @returns {any}
  *
- * @this {Mordor.socketMessageWrapper}
+ * @this {SocketMessageWrapper}
  */
 async function authentication(socket, options) {
     if (socket.isAuthenticated()) {
