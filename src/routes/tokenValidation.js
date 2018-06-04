@@ -1,6 +1,3 @@
-// Require third-party Dependencies
-const { blue } = require("chalk");
-
 /**
  * @func validateAccountToken
  * @desc validate the registration token to active the user account!
@@ -8,9 +5,8 @@ const { blue } = require("chalk");
  * @param {*} res HTTP Response
  * @returns {void}
  */
-function validateAccountToken(req, res) {
-    console.log(blue("HTTP tokenValidation URI has ben hit!"));
-    res.end("ok");
+function validateAccountToken() {
+    return { error: null };
 }
 
 // Export route

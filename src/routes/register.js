@@ -1,103 +1,59 @@
 // Require Node.JS Dependencies
 const { join } = require("path");
 
-// Require third-party Dependencies
-const { blue } = require("chalk");
+// Require Third-party Dependencies
 const is = require("@sindresorhus/is");
 const nodemailer = require("nodemailer");
+const uuid = require("uuid/v4");
+const Datastore = require("nedb-promises");
+const argon2 = require("argon2");
 const {
     isAlphanumeric,
     isEmail,
     isLength
 } = require("validator");
-const uuid = require("uuid/v4");
-const Datastore = require("nedb-promises");
-const argon2 = require("argon2");
 
 // Globals
 const RePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,50}$/;
 const dbDir = join(__dirname, "../../db");
 
 /**
- * @func registerAccount
- * @desc register a new Account on Mordor
- * @param {*} req HTTP Request
- * @param {*} res HTTP Response
+ * @func validateBodyData
+ * @desc Validate the body of /register
+ * @param {Object=} body body object
  * @returns {void}
  */
-async function registerAccount(req, res) {
-    console.log(blue("HTTP Register URI has been hit!"));
-
-    // Assign top variables
-    if (is.nullOrUndefined(req.body)) {
-        return res.json({ error: "Form body not defined in the request!" });
+function validateBodyData({ login, email, password, password2 }) {
+    if ([login, email, password].every((field) => is.nullOrUndefined(field) === true)) {
+        throw new Error("One field has been detected as null or undefined!");
     }
-    const { login = "", email = "", password, password2 } = req.body;
-    let error;
-
-    // Check and sanatize form data!
-    formCheck: {
-        // Check for undefined or null fields
-        if ([login, email, password].every((field) => is.nullOrUndefined(field) === true)) {
-            error = "One field has been detected as null or undefined!";
-            break formCheck;
-        }
-
-        if (!isAlphanumeric(login) || !isLength(login, { min: 2, max: 50 })) {
-            error = "The field login should be Alphanumeric and contain between 2 and 50 characters!";
-            break formCheck;
-        }
-
-        // Check email
-        if (!isEmail(email)) {
-            error = "The email entered doesn't have a valid format!";
-            break formCheck;
-        }
-
-        // Check password match
-        if (!RePassword.test(password)) {
-            error = "Invalid password format";
-            break formCheck;
-        }
-
-        // Check password match
-        if (password !== password2) {
-            error = "Password are not identical!";
-            break formCheck;
-        }
-
+    else if (!isAlphanumeric(login) || !isLength(login, { min: 2, max: 50 })) {
+        throw new Error(
+            "The field login should be Alphanumeric and contain between 2 and 50 characters!"
+        );
+    }
+    else if (!isEmail(email)) {
+        throw new Error("The email entered doesn't have a valid format!");
+    }
+    else if (!RePassword.test(password)) {
+        throw new Error("Invalid password format");
+    }
+    else if (password !== password2) {
+        throw new Error("Password are not identical!");
     }
 
-    // If there are errors...
-    if (!is.nullOrUndefined(error)) {
-        console.error("An error has been detected!");
+    return { email, password };
+}
 
-        return res.json({ error });
-    }
-
-    // Hash the password!
-    const hashedPassword = await argon2.hash(password);
-
-    // Load database
-    const db = Datastore.create(join(dbDir, "storage.db"));
-    await db.load();
-    const docs = (await db.find({ email })).filter(
-        async(user) => await argon2.verify(user.password, hashedPassword)
-    );
-    if (docs.length > 0) {
-        return res.json({ error: "Your email is already used!" });
-    }
-
-    // Insert user in DB
-    const token = uuid();
-    await db.insert({
-        email,
-        password: hashedPassword,
-        token,
-        active: true,
-        registeredAt: new Date()
-    });
-
+/**
+ * @async
+ * @func sendValidationEmail
+ * @desc Send an email to validate (and active) the user account !
+ * @param {!String} email Destination email
+ * @param {!String} token Token used to validate account
+ * @returns {Promise<void>}
+ */
+async function sendValidationEmail(email, token) {
     // Generate test SMTP service account from ethereal.email
     // Only needed if you don't have a real mail account for testing
     const account = await nodemailer.createTestAccount();
@@ -114,16 +70,59 @@ async function registerAccount(req, res) {
     });
 
     // send mail with defined transport object
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
         from: "\"Thomas GENTILHOMME\" <gentilhomme.thomas@gmail.com>",
         to: email,
         subject: "CGM Mordor - Registration email",
         text: `Registration email, token: ${token}`,
         html: `<b>Registration email, token: ${token}</b>`
     });
-    console.log(info);
+}
 
-    return res.json({ error: null });
+/**
+ * @func registerAccount
+ * @desc register a new Account on Mordor
+ * @param {*} req HTTP Request
+ * @param {*} res HTTP Response
+ * @returns {void}
+ */
+async function registerAccount(req, res) {
+    // Validate form data!
+    if (is.nullOrUndefined(req.body)) {
+        throw new Error("Form body not defined in the request!");
+    }
+    const { email, password } = validateBodyData(req.body);
+
+    // Hash the password!
+    const hashedPassword = await argon2.hash(password);
+
+    // Load database
+    const db = Datastore.create(join(dbDir, "storage.db"));
+    await db.load();
+
+    // Try to match user in our database
+    const docs = (await db.find({ email })).filter(
+        async(user) => await argon2.verify(user.password, hashedPassword)
+    );
+    if (docs.length > 0) {
+        return res.json({ error: "Your email is already used!" });
+    }
+
+    // Insert the user in the database
+    const token = uuid();
+    await db.insert({
+        email,
+        password: hashedPassword,
+        token,
+        active: true,
+        registeredAt: new Date()
+    });
+
+    // Send validation email
+    await sendValidationEmail(email, token);
+
+    // Return no error
+    return { error: null };
 }
 
 // Export route

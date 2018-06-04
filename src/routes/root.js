@@ -1,6 +1,3 @@
-// Require third-party Dependencies
-const { blue } = require("chalk");
-
 /**
  * @func root
  * @desc Return the website root with the index view
@@ -9,7 +6,6 @@ const { blue } = require("chalk");
  * @returns {void}
  */
 function root(req, res) {
-    console.log(blue("HTTP Root URI has ben hit!"));
     res.view("index.html");
 }
 

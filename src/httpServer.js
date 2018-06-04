@@ -5,7 +5,8 @@ const { join } = require("path");
 const polka = require("polka");
 const serv = require("serve-static");
 const bodyParser = require("body-parser");
-const { blue, yellow } = require("chalk");
+const { blue, yellow, red, green } = require("chalk");
+const is = require("@sindresorhus/is");
 
 // Require Internal Dependencies
 const { getJavaScriptFiles } = require("./utils");
@@ -55,7 +56,21 @@ httpServer.use(function view(req, res, next) {
 const routes = getJavaScriptFiles(join(__dirname, "routes")).map(require);
 for (const { method = "get", uri = "/", handler } of routes) {
     console.log(blue(`Loading HTTP Route :: (${yellow(method)}) ${uri}`));
-    httpServer[method.toLowerCase()](uri, handler);
+    httpServer[method.toLowerCase()](uri, async function httpHandler(req, res, next) {
+        console.log(blue(
+            `HTTP URI ${yellow(method)} - ${yellow(uri)} (Method: ${green(handler.name)}) has been requeted!`
+        ));
+        try {
+            const ret = await handler(req, res, next);
+            if (!is.nullOrUndefined(ret)) {
+                res.json(ret);
+            }
+        }
+        catch (error) {
+            console.error(red(error.message));
+            res.json({ error });
+        }
+    });
 }
 
 module.exports = httpServer;
