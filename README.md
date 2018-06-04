@@ -16,11 +16,10 @@ The project has been designed to work with a local database. If more performance
 
 ## Roadmap
 
+### Major
 - Work on authentication by sending an email with a token!
-- Allow to filter on getProjects socket command.
+- Work on Auth flow (AccessToken for App & GameServ).
 - Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).
 
-## Issues
-
-- TypeScript definition not always loaded
-- expose net definition (past solution doesn't work well).
+### Minor
+- Allow to filter on getProjects socket command.

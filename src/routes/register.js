@@ -94,7 +94,7 @@ async function registerAccount(req, res) {
         email,
         password: hashedPassword,
         token,
-        active: false,
+        active: true,
         registeredAt: new Date()
     });
 
