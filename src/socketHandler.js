@@ -2,51 +2,18 @@
 const { join } = require("path");
 
 // Require Third-party Dependencies
-const { green, yellow, red, blue } = require("chalk");
 const is = require("@sindresorhus/is");
-const uuid = require("uuid/v4");
 
 // Require Internal Dependencies
-const socketMessageWrapper = new (require("./class/socketMessageWrapper"))();
-const { parseSocketMessages, getJavaScriptFiles } = require("./utils");
+const SocketHandler = new (require("./class/SocketHandler"))();
+const autoLoader = require("./autoloader");
 
-// MODULE CONSTANTS
-/**
- * @const MAX_REQUESTS_PER_SECOND
- * @desc Maximum number of requests per second that a remote socket can burst
- * @type {Number}
- */
-const MAX_REQUESTS_PER_SECOND = 30;
+// Setup deviation variable(s)
+SocketHandler.servers = new Map();
+SocketHandler.clients = new Map();
 
-/**
- * @const PONG_TIMEOUT
- * @desc Ping/Pong TIMEOUT
- * @type {Number}
- */
-const PONG_TIMEOUT = 5000;
-
-/**
- * Load all sockets handlers!
- */
-const socketHandlers = getJavaScriptFiles(join(__dirname, "sockets")).map(require);
-for (const handler of socketHandlers) {
-    console.log(blue(`Loading socket event :: ${yellow(handler.name)}`));
-    const bindedHandler = handler.bind(socketMessageWrapper);
-
-    socketMessageWrapper.on(handler.name, async function eventHandler(socket, ...args) {
-        console.log(blue(`Event ${handler.name} triggered by socket ${socket.id}`));
-        try {
-            const ret = await bindedHandler(socket, ...args);
-            if (ret.exit) {
-                return;
-            }
-            socketMessageWrapper.send(socket, handler.name, ret || { error: null });
-        }
-        catch (error) {
-            socketMessageWrapper.send(socket, handler.name, { error });
-        }
-    });
-}
+// Load all sockets handlers!
+autoLoader(SocketHandler, join(__dirname, "sockets"));
 
 /**
  * @func socketHandler
@@ -55,8 +22,6 @@ for (const handler of socketHandlers) {
  * @returns {void}
  */
 function socketHandler(socket) {
-    socketMessageWrapper.currConnectedSockets.add(socket);
-
     /**
      * @func isAuthenticated
      * @desc Verify if the socket client is authenticated!
@@ -69,94 +34,15 @@ function socketHandler(socket) {
             return false;
         }
         if (!remoteClient.isUpToDate()) {
-            socketMessageWrapper.removeSocket(socket);
+            SocketHandler.removeSocket(socket);
         }
 
         return true;
     }
 
-    // Set new parameters on curr socket
-    Reflect.set(socket, "id", uuid());
-    Reflect.set(socket, "requestCount", 0);
     Reflect.set(socket, "isAuthenticated", isAuthenticated);
-    Reflect.set(socket, "pongDt", new Date().getTime());
-    console.log(green(`New socket client (id: ${yellow(socket.id)}) connected!`));
-
-    /**
-     * @func socketDataHandler
-     * @param {!Buffer} msg Socket (buffer) message
-     * @returns {void}
-     */
-    function socketDataHandler(msg) {
-        if (is.nullOrUndefined(msg)) {
-            return;
-        }
-
-        // Parse and send message to the event container (wrapper).
-        const messages = parseSocketMessages(msg.toString());
-
-        // Disconnect remote socket if max requests (messages) has been reach!
-        socket.requestCount += messages.length;
-        if (socket.requestCount >= MAX_REQUESTS_PER_SECOND) {
-            console.error(red(`Threshold of the maximum allowed requests has been hit by socket id: ${socket.id}`));
-            socket.destroy();
-
-            return;
-        }
-
-        // Handle messages
-        for (const msg of messages) {
-            socketMessageWrapper.emit(msg.title, socket, msg.body);
-        }
-
-        return;
-    }
-    socket.on("data", socketDataHandler);
-
-    /**
-     * @func socketClose
-     * @desc Define handler to apply when socket receive a close or error event
-     * @returns {void}
-     */
-    function socketClose() {
-        if (!socketMessageWrapper.removeSocket(socket)) {
-            return;
-        }
-        console.log(yellow(`Socket client (id: ${socket.id}) has been disconnected!`));
-    }
-    socket.on("close", socketClose);
-    socket.on("error", socketClose);
+    SocketHandler.connectSocket(socket);
 }
-
-/**
- * Reset all sockets requestCount to 0 every seconds!
- */
-setInterval(function resetSocketRequestCount() {
-    for (const socket of socketMessageWrapper.currConnectedSockets) {
-        Reflect.set(socket, "requestCount", 0);
-    }
-}, 1000);
-
-/**
- * Ping all remote sockets to be sure they are alive.
- */
-setInterval(function pingRemoteSocket() {
-    const startDatePing = new Date().getTime();
-    for (const socket of socketMessageWrapper.currConnectedSockets) {
-        socketMessageWrapper.send(socket, "ping", {
-            dt: startDatePing
-        });
-    }
-
-    setTimeout(function checkPong() {
-        for (const socket of socketMessageWrapper.currConnectedSockets) {
-            if (socket.pongDt !== startDatePing) {
-                console.log(red(`Ping/pong timeout for socket with id ${yellow(socket.id)}`));
-                socket.destroy();
-            }
-        }
-    }, PONG_TIMEOUT);
-}, 60000);
 
 // Export socket function handler
 module.exports = socketHandler;

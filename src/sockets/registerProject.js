@@ -30,7 +30,7 @@ function registerProject(socket, options) {
         from: remoteServer.uid,
         project: project.valueOf()
     };
-    this.broadcastAll(socket, "registerProject", ret);
+    this.broadcast(socket, "registerProject", ret);
 
     return ret;
 }
