@@ -20,6 +20,9 @@ const is = require("@sindresorhus/is");
  */
 function parseSocketMessages(msg) {
     const ret = [];
+    if (msg === "") {
+        return ret;
+    }
 
     // Split the string by Return to line "\n"
     const lines = msg.split("\n");

@@ -74,12 +74,12 @@ class SocketHandler extends events {
      * @method socketDataHandler
      * @desc Socket message handler!
      * @param {!net.Socket} socket Node socket
-     * @param {!Buffer} msg buffer!
+     * @param {!Buffer} buf buffer!
      * @returns {SocketMessage[]}
      * @this net.Socket
      */
-    static socketDataHandler(socket, msg) {
-        const messages = parseSocketMessages(msg.toString());
+    static socketDataHandler(socket, buf) {
+        const messages = parseSocketMessages(buf.toString());
         if (!SocketHandler.verifySocketRequestCount(socket, messages.length)) {
             return [];
         }
@@ -115,6 +115,7 @@ class SocketHandler extends events {
         super();
         this.on("error", console.error);
         this.currConnectedSockets = new Set();
+        this.events = new class EHandler extends events {}();
 
         // Setup wrapper interval !
         setInterval(SocketHandler.resetRequestCount.bind(this), 1000);
@@ -136,19 +137,18 @@ class SocketHandler extends events {
         if (this.currConnectedSockets.has(socket)) {
             return;
         }
-        Reflect.set(socket, "id", uuid());
+        const id = uuid();
+        Reflect.set(socket, "id", id);
         Reflect.set(socket, "requestCount", 0);
         Reflect.set(socket, "pongDt", new Date().getTime());
 
         // Add socket to the Set
         this.currConnectedSockets.add(socket);
-        console.log(green(`New socket client (id: ${yellow(socket.id)}) connected!`));
+        this.send(socket, "connection", { id });
+        console.log(green(`New socket client (id: ${yellow(id)}) connected!`));
 
         // Handle socket data
         socket.on("data", (buf) => {
-            if (is.nullOrUndefined(buf)) {
-                return;
-            }
             const messages = SocketHandler.socketDataHandler(socket, buf);
             for (const { title, body = {} } of messages) {
                 this.emit(title, socket, body);
@@ -234,6 +234,53 @@ class SocketHandler extends events {
 
         const data = JSON.stringify({ title, body });
         socket.write(Buffer.from(`${data}\n`));
+    }
+
+    /**
+     * @public
+     * @method sendAndWait
+     * @template T
+     * @desc Send a new message to the MordorClient!
+     * @memberof SocketHandler#
+     * @param {net.Socket} socket Node.JS Net socket
+     * @param {Object=} options options
+     * @param {!String} options.title message title
+     * @param {Object=} [options.body={}] message body
+     * @param {Number=} [options.timeOut=5000] Send timeout!
+     * @returns {Promise<T | void>}
+     *
+     * @throws {TypeError}
+     */
+    sendAndWait(socket, { title, body = {}, timeOut = 5000 }) {
+        return new Promise((resolve, reject) => {
+            if (!this.currConnectedSockets.has(socket)) {
+                throw new Error("Unable to find socket on the client list!");
+            }
+            if (!is.string(title)) {
+                throw new TypeError("title argument should be typeof string");
+            }
+            const data = JSON.stringify({ title, body });
+            this.client.write(Buffer.from(data.concat("\n")));
+
+            // Return if we dont expect a return from MordorClient
+            if (timeOut === 0) {
+                return resolve();
+            }
+
+            /** @type {NodeJS.Timer} */
+            let timeOutRef = null;
+            function handler(data) {
+                clearTimeout(timeOutRef);
+                resolve(data);
+            }
+            timeOutRef = setTimeout(() => {
+                this.events.removeListener(title, handler);
+                reject(new Error(`Timeout message ${title}`));
+            }, timeOut);
+            this.events.addListener(title, handler);
+
+            return void 0;
+        });
     }
 
     /**

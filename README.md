@@ -17,6 +17,7 @@ The project has been designed to work with a local database. If more performance
 ## Roadmap
 
 ### Major
+- Store Servers and Projects on the Disk (avoid memory usage).
 - Work on authentication by sending an email with a token!
 - Work on Auth flow (AccessToken for App & GameServ).
 - Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).

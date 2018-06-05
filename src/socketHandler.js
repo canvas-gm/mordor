@@ -11,6 +11,7 @@ const autoLoader = require("./autoloader");
 // Setup deviation variable(s)
 SocketHandler.servers = new Map();
 SocketHandler.clients = new Map();
+SocketHandler.accessToken = new Map();
 
 // Load all sockets handlers!
 autoLoader(SocketHandler, join(__dirname, "sockets"));
