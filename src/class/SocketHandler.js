@@ -141,6 +141,7 @@ class SocketHandler extends events {
         Reflect.set(socket, "id", id);
         Reflect.set(socket, "requestCount", 0);
         Reflect.set(socket, "pongDt", new Date().getTime());
+        Reflect.set(socket, "connectedAt", new Date().getTime());
 
         // Add socket to the Set
         this.currConnectedSockets.add(socket);

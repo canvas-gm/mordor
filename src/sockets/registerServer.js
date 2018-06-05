@@ -14,6 +14,9 @@ function registerServer(socket, options) {
     if (this.servers.has(uid)) {
         throw new Error("Server already authentified (currently in use)");
     }
+    if (socket.session) {
+        throw new Error("Cannot register a Server if you'r authenticated as Client");
+    }
     Reflect.set(socket, "serverId", uid);
     this.servers.set(uid, new RemoteServer(socket, options));
 

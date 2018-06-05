@@ -20,16 +20,35 @@ async function generateAccessToken(socket, { socketId, clientId }) {
         };
     }
 
+    // Setup AccessToken timeout!
+    const timeOut = setTimeout(() => {
+        this.accessToken.get(clientId).delete(socket.id);
+        if (this.accessToken.get(clientId).size === 0) {
+            this.accessToken.delete(clientId);
+        }
+    }, 5000);
+
     // Setup a new AccessToken
-    const serverId = await argon2.hash(uid);
-    this.accessToken.set(clientId, {
-        serverId,
-        token: randtoken.generate(16)
-    });
+    const lock = randtoken.generate(16);
+    const token = {
+        lock,
+        requested: false,
+        timeOut,
+        value: await argon2.hash(socket.id + lock + socketId)
+    };
+    if (!this.accessToken.has(clientId)) {
+        this.accessToken.set(clientId, new Map([socket.id, token]));
+    }
+    else {
+        if (this.accessToken.get(clientId).has(socket.id)) {
+            throw new Error("AccessToken still alive");
+        }
+        this.accessToken.get(clientId).set(socket.id, token);
+    }
 
     return {
-        error: null,
-        serverId
+        serverId: socket.id,
+        error: null
     };
 }
 
