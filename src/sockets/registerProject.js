@@ -26,6 +26,7 @@ function registerProject(socket, options) {
     remoteServer.projects.set(name, project);
 
     const ret = {
+        error: null,
         from: remoteServer.uid,
         project: project.valueOf()
     };

@@ -7,7 +7,7 @@
 function ping(socket, { dt }) {
     Reflect.set(socket, "pongDt", dt);
 
-    return void 0;
+    return { exit: true };
 }
 
 module.exports = ping;

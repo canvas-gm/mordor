@@ -55,7 +55,7 @@ httpServer.use(function view(req, res, next) {
  */
 const routes = getJavaScriptFiles(join(__dirname, "routes")).map(require);
 for (const { method = "get", uri = "/", handler } of routes) {
-    console.log(blue(`Loading HTTP Route :: (${yellow(method)}) ${uri}`));
+    console.log(blue(`Loading HTTP Route :: (${green(method)}) ${yellow(uri)}`));
     httpServer[method.toLowerCase()](uri, async function httpHandler(req, res, next) {
         console.log(blue(
             `HTTP URI ${yellow(method)} - ${yellow(uri)} (Method: ${green(handler.name)}) has been requeted!`

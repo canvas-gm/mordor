@@ -1,12 +1,14 @@
+// Require Node.JS dependencies
+const { join } = require("path");
+
 // Require Third-party Dependencies
-const { green, yellow, red } = require("chalk");
+const { green, yellow, red, blue } = require("chalk");
 const is = require("@sindresorhus/is");
 const uuid = require("uuid/v4");
 
 // Require Internal Dependencies
-/** @type {SocketMessageWrapper} */
-const socketEvents = require("./socketEvents");
-const { parseSocketMessages } = require("./utils");
+const socketMessageWrapper = new (require("./class/socketMessageWrapper"))();
+const { parseSocketMessages, getJavaScriptFiles } = require("./utils");
 
 // MODULE CONSTANTS
 /**
@@ -24,10 +26,27 @@ const MAX_REQUESTS_PER_SECOND = 30;
 const PONG_TIMEOUT = 5000;
 
 /**
- * Close every sockets properly on critical error(s)
+ * Load all sockets handlers!
  */
-process.once("SIGINT", socketEvents.disconnectAllSockets.bind(socketEvents));
-process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
+const socketHandlers = getJavaScriptFiles(join(__dirname, "sockets")).map(require);
+for (const handler of socketHandlers) {
+    console.log(blue(`Loading socket event :: ${yellow(handler.name)}`));
+    const bindedHandler = handler.bind(socketMessageWrapper);
+
+    socketMessageWrapper.on(handler.name, async function eventHandler(socket, ...args) {
+        console.log(blue(`Event ${handler.name} triggered by socket ${socket.id}`));
+        try {
+            const ret = await bindedHandler(socket, ...args);
+            if (ret.exit) {
+                return;
+            }
+            socketMessageWrapper.send(socket, handler.name, ret || { error: null });
+        }
+        catch (error) {
+            socketMessageWrapper.send(socket, handler.name, { error });
+        }
+    });
+}
 
 /**
  * @func socketHandler
@@ -36,7 +55,7 @@ process.once("exit", socketEvents.disconnectAllSockets.bind(socketEvents));
  * @returns {void}
  */
 function socketHandler(socket) {
-    socketEvents.currConnectedSockets.add(socket);
+    socketMessageWrapper.currConnectedSockets.add(socket);
 
     /**
      * @func isAuthenticated
@@ -50,7 +69,7 @@ function socketHandler(socket) {
             return false;
         }
         if (!remoteClient.isUpToDate()) {
-            socketEvents.removeSocket(socket);
+            socketMessageWrapper.removeSocket(socket);
         }
 
         return true;
@@ -87,7 +106,7 @@ function socketHandler(socket) {
 
         // Handle messages
         for (const msg of messages) {
-            socketEvents.emit(msg.title, socket, msg.body);
+            socketMessageWrapper.emit(msg.title, socket, msg.body);
         }
 
         return;
@@ -100,7 +119,7 @@ function socketHandler(socket) {
      * @returns {void}
      */
     function socketClose() {
-        if (!socketEvents.removeSocket(socket)) {
+        if (!socketMessageWrapper.removeSocket(socket)) {
             return;
         }
         console.log(yellow(`Socket client (id: ${socket.id}) has been disconnected!`));
@@ -113,7 +132,7 @@ function socketHandler(socket) {
  * Reset all sockets requestCount to 0 every seconds!
  */
 setInterval(function resetSocketRequestCount() {
-    for (const socket of socketEvents.currConnectedSockets) {
+    for (const socket of socketMessageWrapper.currConnectedSockets) {
         Reflect.set(socket, "requestCount", 0);
     }
 }, 1000);
@@ -123,14 +142,14 @@ setInterval(function resetSocketRequestCount() {
  */
 setInterval(function pingRemoteSocket() {
     const startDatePing = new Date().getTime();
-    for (const socket of socketEvents.currConnectedSockets) {
-        socketEvents.send(socket, "ping", {
+    for (const socket of socketMessageWrapper.currConnectedSockets) {
+        socketMessageWrapper.send(socket, "ping", {
             dt: startDatePing
         });
     }
 
     setTimeout(function checkPong() {
-        for (const socket of socketEvents.currConnectedSockets) {
+        for (const socket of socketMessageWrapper.currConnectedSockets) {
             if (socket.pongDt !== startDatePing) {
                 console.log(red(`Ping/pong timeout for socket with id ${yellow(socket.id)}`));
                 socket.destroy();

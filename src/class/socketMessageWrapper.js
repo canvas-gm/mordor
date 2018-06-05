@@ -22,6 +22,12 @@ class SocketMessageWrapper extends events {
         this.currConnectedSockets = new Set();
         this.clients = new Map();
         this.servers = new Map();
+
+        /**
+         * Close every sockets properly on critical error(s)
+         */
+        process.once("SIGINT", this.disconnectAllSockets.bind(this));
+        process.once("exit", this.disconnectAllSockets.bind(this));
     }
 
     /**

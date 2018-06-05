@@ -79,6 +79,7 @@ async function authentication(socket, options) {
     Reflect.set(socket, "session", client);
 
     return {
+        error: null,
         socketId: socket.id
     };
 }
