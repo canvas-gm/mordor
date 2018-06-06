@@ -68,12 +68,15 @@ The project has been designed to work with a local database. If more performance
 ## Roadmap
 
 ### Major
-- Store Servers and Projects on the Disk (avoid memory usage).
-- Work on authentication by sending an email with a token!
-- Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).
-- Add complete tests set.
+- [Issue](https://github.com/canvas-gm/mordor/issues/2) Store Servers and Projects on the Disk (avoid memory usage).
+- [Issue](https://github.com/canvas-gm/mordor/issues/3) Work on authentication by sending an email with a token!
+- Add at least 70% test coverage.
 
 ### Minor
 - Allow more settings to be registered for a Server.
 - Allow to filter on getProjects socket command.
-- Complete JSDoc documentation
+- Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).
+
+## Technical fact
+- JSDoc documentation have to be completed.
+- [Issue](https://github.com/canvas-gm/mordor/issues/1) TypeScript definition is not working as expected.
