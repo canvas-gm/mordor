@@ -26,8 +26,8 @@ const fsAsync = {
 };
 
 // CONSTANTS
-const DEFAULTCONFIG = join(__dirname, "config/defaultconfig.json");
-const CUSTOMCONFIG = join(__dirname, "config/customconfig.json");
+const DEFAULTCONFIG = join(__dirname, "config/defaultSettings.json");
+const CUSTOMCONFIG = join(__dirname, "config/editableSettings.json");
 
 /**
  * @async

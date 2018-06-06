@@ -1,14 +1,30 @@
 # mordor
 Mordor tower (Central Realtime Socket Server API for CGM). Work as the main HTTP API to create an account too.
 
+## Prerequisites
+
+To use and start the project you will need at least:
+
+- node.js version 10 or higher.
+- npm version 5 or higher.
+
 ## Getting Started
+
+To install and start the project, please write and run these commands on your favorite terminal:
 
 ```bash
 $ npm install
 $ npm start
 ```
 
-On the first start the server should generate a `customconfig.json` in the /config directory. Use it to configure the server like you want (and dont touch defaultconfig.json).
+At the first start, the server will generate a new `editableSettings.json` in the root folder `/config`. Use this file to configure your server like you want ! (Without having to touch defaultSettings).
+
+For more help on how to use APIs, please run the following npm command to generate the documentation:
+```bash
+npm run doc
+```
+
+A new root folder `docs` should appear. Move in and open `index.html` with your favorite browser.
 
 ## Design limitation
 
