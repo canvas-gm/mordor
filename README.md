@@ -31,6 +31,36 @@ npm run doc
 
 A new root folder `docs` should appear. Move in and open `index.html` with your favorite browser.
 
+## Project tree
+
+All important files and folders to know are here:
+
+```
+├── config [Where configuration are stored]
+├── index.d.ts [TypeScript definition file]
+├── index.js [Main Server entry]
+├── esdoc.json [JSdoc (esdoc) configuration]
+├── package-lock.json
+├── package.json [npm/node main manifest]
+├── .editorconfig [To force your code editor to get the right configuration]
+├── .eslintrc [ESLint configuration, allow to force a given syntax and allow developer to quickly found bugs]
+├── README.md
+├── data [Where some JSON data are stored (like Articles)]
+├── db [Where local database are stored]
+├── public [All public assets that are served by the HTTP Server to be used on the Front-end]
+├── views [HTLM Views used by the HTTP Server]
+├── src
+|  ├── utils.js [Utils functions used across the project]
+|  ├── autoloader.js [Autoloader for sockets commands]
+|  ├── httpServer.js [Where the http server as well as his middleware are declared]
+|  ├── socketHandler.js [Where we manage main socket handler]
+|  ├── viewRenderer.js [Little function to render HTML View with a memory cache]
+|  ├── routes [Where all http route are stored]
+|  ├── sockets [Where all sockets commands are stored]
+|  └── class [Where all class used in the project are stored]
+└── test
+```
+
 ## Design limitation
 
 The project has been designed to work with a local database. If more performance and scalability are required we should evolve with a real database like MySQL or RethinkDB.
