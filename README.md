@@ -1,5 +1,10 @@
 # mordor
-Mordor tower (Central Realtime Socket Server API for CGM). Work as the main HTTP API to create an account too.
+Mordor tower (Geek reference to the FILM `Seigneur des anneaux`).
+
+What is ?
+
+- The central Socket API of CanvasGM. (Authentication, Share all connected servers to connected clients).
+- HTTP Server that allow to register a new account (maybe more later).
 
 ## Prerequisites
 
