@@ -31,6 +31,13 @@ npm run doc
 
 A new root folder `docs` should appear. Move in and open `index.html` with your favorite browser.
 
+To run the project tests and coverage:
+```bash
+$ npm test
+$ npm run coverage
+$ npm run report
+```
+
 ## Project tree
 
 All important files and folders to know are here:
