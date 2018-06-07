@@ -4,7 +4,6 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 const avaTest = require("ava");
-const is = require("@sindresorhus/is");
 const request = require("supertest");
 const Datastore = require("nedb-promises");
 

@@ -9,10 +9,11 @@ const { getJavaScriptFiles } = require("./utils");
  * @desc Load all sockets handlers!
  * @param {*} SocketHandler SocketHandler
  * @param {!String} path Path to directory
- * @returns {void}
+ * @returns {Number}
  */
 function autoSocketLoaded(SocketHandler, path) {
     const socketHandlers = getJavaScriptFiles(path).map(require);
+    const loadedCount = socketHandlers.length;
     for (const handler of socketHandlers) {
         console.log(blue(`Loading socket event :: ${yellow(handler.name)}`));
         const bindedHandler = handler.bind(SocketHandler);
@@ -20,11 +21,11 @@ function autoSocketLoaded(SocketHandler, path) {
         SocketHandler.on(handler.name, async function eventHandler(socket, ...args) {
             console.log(blue(`Event ${handler.name} triggered by socket ${socket.id}`));
             try {
-                const ret = await bindedHandler(socket, ...args);
+                const ret = await bindedHandler(socket, ...args) || { error: null };
                 if (ret.exit) {
                     return;
                 }
-                SocketHandler.send(socket, handler.name, ret || { error: null });
+                SocketHandler.send(socket, handler.name, ret);
             }
             catch (error) {
                 console.error(red(error));
@@ -33,6 +34,8 @@ function autoSocketLoaded(SocketHandler, path) {
             }
         });
     }
+
+    return loadedCount;
 }
 
 module.exports = autoSocketLoaded;
