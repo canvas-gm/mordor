@@ -4,7 +4,7 @@ const {
     readFile,
     constants: { R_OK }
 } = require("fs");
-const { join } = require("path");
+const { join, extname } = require("path");
 const { promisify } = require("util");
 
 // Require Third-party dependencies
@@ -60,8 +60,13 @@ function viewRenderer(dir, { disableCache = false } = {}) {
      * @returns {Promise<String>}
      */
     async function render(viewPath) {
+        /* eslint no-param-reassign: off */
+        if (extname(viewPath) === "") {
+            viewPath = viewPath.concat(".html");
+        }
+
         // Check if we already have view in our cache
-        if (cache.has(viewPath) || !disableCache) {
+        if (cache.has(viewPath) && disableCache === false) {
             return cache.get(viewPath);
         }
         const completeDirectoryPath = join(dir, viewPath);

@@ -4,9 +4,11 @@
   "description": "CGM Mordor tower",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx ava --verbose",
     "start": "node index",
-    "doc": "npx esdoc -c esdoc.json"
+    "doc": "npx esdoc -c esdoc.json",
+    "coverage": "npx nyc ava",
+    "report": "npx nyc report --reporter=html"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,6 @@
   "homepage": "https://github.com/canvas-gm/mordor#readme",
   "dependencies": {
     "@sindresorhus/is": "^0.9.0",
-    "@types/es6-shim": "^0.31.37",
     "argon2": "^0.19.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
@@ -35,10 +36,13 @@
     "validator": "^10.2.0"
   },
   "devDependencies": {
+    "@types/es6-shim": "^0.31.37",
     "@types/node": "^10.3.0",
+    "ava": "1.0.0-beta.5.1",
     "esdoc": "^1.1.0",
     "esdoc-node": "^1.0.3",
     "esdoc-standard-plugin": "^1.0.0",
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "nyc": "^12.0.2"
   }
 }
