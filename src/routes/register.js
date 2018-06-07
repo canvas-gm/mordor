@@ -86,11 +86,7 @@ async function sendValidationEmail(email, token) {
  * @param {*} res HTTP Response
  * @returns {void}
  */
-async function registerAccount(req, res) {
-    // Validate form data!
-    if (is.nullOrUndefined(req.body)) {
-        throw new Error("Form body not defined in the request!");
-    }
+async function registerAccount(req) {
     const { email, password } = validateBodyData(req.body);
 
     // Hash the password!
@@ -105,7 +101,7 @@ async function registerAccount(req, res) {
         async(user) => await argon2.verify(user.password, hashedPassword)
     );
     if (docs.length > 0) {
-        return res.json({ error: "Your email is already used!" });
+        throw new Error("Your email is already used!");
     }
 
     // Insert the user in the database

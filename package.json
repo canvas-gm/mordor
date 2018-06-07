@@ -7,7 +7,7 @@
     "test": "npx ava --verbose",
     "start": "node index",
     "doc": "npx esdoc -c esdoc.json",
-    "coverage": "npx nyc ava",
+    "coverage": "npx nyc ava --verbose",
     "report": "npx nyc report --reporter=html"
   },
   "repository": {
@@ -43,6 +43,7 @@
     "esdoc-node": "^1.0.3",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^4.19.1",
-    "nyc": "^12.0.2"
+    "nyc": "^12.0.2",
+    "supertest": "^3.1.0"
   }
 }

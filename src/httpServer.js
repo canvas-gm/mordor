@@ -54,11 +54,11 @@ httpServer.use(function view(req, res, next) {
  * Load all HTTP Modules contained in the /routes directory
  */
 const routes = getJavaScriptFiles(join(__dirname, "routes")).map(require);
-for (const { method = "get", uri = "/", handler } of routes) {
+for (const { method, uri, handler } of routes) {
     console.log(blue(`Loading HTTP Route :: (${green(method)}) ${yellow(uri)}`));
     httpServer[method.toLowerCase()](uri, async function httpHandler(req, res, next) {
         console.log(blue(
-            `HTTP URI ${yellow(method)} - ${yellow(uri)} (Method: ${green(handler.name)}) has been requeted!`
+            `HTTP URI ${yellow(method)} - ${yellow(uri)} (Method: ${green(handler.name)}) has been requested!`
         ));
         try {
             const ret = await handler(req, res, next);
@@ -68,7 +68,7 @@ for (const { method = "get", uri = "/", handler } of routes) {
         }
         catch (error) {
             console.error(red(error.message));
-            res.json({ error });
+            res.json({ error: error.message });
         }
     });
 }

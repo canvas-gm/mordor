@@ -1,5 +1,5 @@
 // Require Third-party Dependencies
-const { yellow, blue } = require("chalk");
+const { yellow, blue, red } = require("chalk");
 
 // Require Internal Dependencies
 const { getJavaScriptFiles } = require("./utils");
@@ -27,6 +27,8 @@ function autoSocketLoaded(SocketHandler, path) {
                 SocketHandler.send(socket, handler.name, ret || { error: null });
             }
             catch (error) {
+                console.error(red(error));
+
                 SocketHandler.send(socket, handler.name, { error });
             }
         });
