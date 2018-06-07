@@ -10,7 +10,8 @@ const is = require("@sindresorhus/is");
 const viewRenderer = require("../src/viewRenderer");
 
 // String value of view.html
-const viewStr = readFileSync(join(__dirname, "view.html")).toString();
+const viewDir = join(__dirname, "views");
+const viewStr = readFileSync(join(viewDir, "test.html")).toString();
 
 avaTest("dir argument throw TypeError", (test) => {
     const error = test.throws(() => {
@@ -21,7 +22,7 @@ avaTest("dir argument throw TypeError", (test) => {
 
 avaTest("disableCache options is not a boolean ", (test) => {
     const error = test.throws(() => {
-        viewRenderer(__dirname, {
+        viewRenderer(viewDir, {
             disableCache: "true"
         });
     }, TypeError);
@@ -29,30 +30,30 @@ avaTest("disableCache options is not a boolean ", (test) => {
 });
 
 avaTest("viewRenderer return a AsyncFunction", (test) => {
-    const render = viewRenderer(__dirname);
+    const render = viewRenderer(viewDir);
     test.is(is.asyncFunction(render), true);
 });
 
 avaTest("load view with cache", async(test) => {
-    const render = viewRenderer(__dirname, {
+    const render = viewRenderer(viewDir, {
         disableCache: false
     });
-    test.is(await render("view"), viewStr);
-    test.is(await render("view.html"), viewStr);
+    test.is(await render("test"), viewStr);
+    test.is(await render("test.html"), viewStr);
 });
 
 avaTest("load view without cache", async(test) => {
-    const render = viewRenderer(__dirname, {
+    const render = viewRenderer(viewDir, {
         disableCache: true
     });
-    test.is(await render("view"), viewStr);
-    test.is(await render("view.html"), viewStr);
+    test.is(await render("test"), viewStr);
+    test.is(await render("test.html"), viewStr);
 });
 
 avaTest("load view from an unknow directory", async(test) => {
-    const render = viewRenderer(join(__dirname, "unknow"));
+    const render = viewRenderer(join(viewDir, "unknow"));
     const error = await test.throws(async() => {
-        await render("view");
+        await render("test");
     }, Error);
     test.is(error.code, "ENOENT");
 });
