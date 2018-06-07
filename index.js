@@ -15,7 +15,7 @@ const { promisify } = require("util");
 const { blue, yellow } = require("chalk");
 
 // Require Internal Modules
-const socketHandler = require("./src/socketHandler");
+const { handler: socketHandler } = require("./src/socketHandler");
 const httpServer = require("./src/httpServer");
 
 // FS Async wrapper

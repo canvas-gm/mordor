@@ -46,4 +46,7 @@ function socketHandler(socket) {
 }
 
 // Export socket function handler
-module.exports = socketHandler;
+module.exports = {
+    handler: socketHandler,
+    socket: SocketHandler
+};
