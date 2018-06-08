@@ -69,18 +69,16 @@ All important files and folders to know are here:
 └── test
 ```
 
-## Design limitation
-
-The project has been designed to work with a local database. If more performance and scalability are required we should evolve with a real database like MySQL or RethinkDB.
-
 ## Roadmap
 
 ### Major
+- **BLOQUANT** - Remove local DB for RethinkDB
 - [Issue](https://github.com/canvas-gm/mordor/issues/2) Store Servers and Projects on the Disk (avoid memory usage).
 - [Issue](https://github.com/canvas-gm/mordor/issues/3) Work on authentication by sending an email with a token!
 - Make a better password Regex (think to update test/http).
 
 ### Minor
+- Find a way to manage "fake" accounts for socket tests.
 - Improve front-end registration error handling
 - Allow to start only the http or socket server. (with start command `--http`, `--socket`)
 - Allow more settings to be registered for a Server.
