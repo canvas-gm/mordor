@@ -22,7 +22,7 @@ const dbDir = join(__dirname, "../../db");
  * @desc Check if the user is registered or not
  * @param {!String} email email
  * @param {!String} password password
- * @returns {Promise<void>}
+ * @returns {Promise<Object>}
  *
  * @throws {TypeError}
  */
@@ -54,6 +54,8 @@ async function checkUserRegistration(email, password) {
     if (docs.length === 0) {
         throw new Error(`Unable to found any valid account with email ${email}`);
     }
+
+    return docs[0];
 }
 
 /**
@@ -71,10 +73,10 @@ async function authentication(socket, options) {
     }
 
     // Verify if the user is registered!
-    await checkUserRegistration(options.email, options.password);
+    const user = await checkUserRegistration(options.email, options.password);
 
     // Save session on the client and socketEvents!
-    const client = new RemoteClient(socket, options.email);
+    const client = new RemoteClient(socket, user);
     this.clients.set(socket.id, client);
     Reflect.set(socket, "session", client);
 

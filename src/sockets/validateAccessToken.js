@@ -33,8 +33,12 @@ async function validateAccessToken(socket, { accessToken, socketId, clientId }) 
         this.accessToken.delete(clientId);
     }
 
+    // Retrieve client
+    const client = this.clients.get(clientId).valueOf();
+
     return {
-        error: null
+        error: null,
+        client
     };
 }
 

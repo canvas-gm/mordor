@@ -9,10 +9,13 @@ class RemoteClient {
     /**
      * @constructor
      * @param {net.Socket} socket Node.JS Socket
-     * @param {!String} email client email
+     * @param {Object} user user
+     * @param {!String} user.login client login
+     * @param {!String} user.email client email
      */
-    constructor(socket, email) {
+    constructor(socket, { login, email }) {
         this.socket = socket;
+        this.login = login;
         this.email = email;
         this.updatedAt = new Date();
     }
@@ -28,6 +31,19 @@ class RemoteClient {
         this.updatedAt = new Date();
 
         return true;
+    }
+
+    /**
+     * @public
+     * @method valueOf
+     * @memberof RemoteClient#
+     * @returns {Object}
+     */
+    valueOf() {
+        return {
+            login: this.login,
+            email: this.email
+        };
     }
 
 }

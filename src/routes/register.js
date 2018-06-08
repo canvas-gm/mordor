@@ -42,7 +42,7 @@ function validateBodyData({ login, email, password, password2 }) {
         throw new Error("Password are not identical!");
     }
 
-    return { email, password };
+    return { email, password, login };
 }
 
 /**
@@ -87,7 +87,7 @@ async function sendValidationEmail(email, token) {
  * @returns {void}
  */
 async function registerAccount(req) {
-    const { email, password } = validateBodyData(req.body);
+    const { login, email, password } = validateBodyData(req.body);
 
     // Hash the password!
     const hashedPassword = await argon2.hash(password);
@@ -107,6 +107,7 @@ async function registerAccount(req) {
     // Insert the user in the database
     const token = uuid();
     await db.insert({
+        login,
         email,
         password: hashedPassword,
         token,
