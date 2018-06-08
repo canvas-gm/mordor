@@ -30,7 +30,7 @@ function autoSocketLoaded(SocketHandler, path) {
             catch (error) {
                 console.error(red(error));
 
-                SocketHandler.send(socket, handler.name, { error });
+                SocketHandler.send(socket, handler.name, { error: error.message });
             }
         });
     }

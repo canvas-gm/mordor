@@ -39,7 +39,6 @@ async function checkUserRegistration(email, password) {
     const db = Datastore.create(join(dbDir, "storage.db"));
     await db.load();
 
-
     // Hash password
     const hashPassword = await argon2.hash(password);
 
