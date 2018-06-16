@@ -20,6 +20,7 @@ To install and start the project, please write and run these commands on your fa
 
 ```bash
 $ npm install
+$ npm run build
 $ npm start
 ```
 
