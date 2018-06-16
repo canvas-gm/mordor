@@ -78,7 +78,6 @@ All important files and folders to know are here:
 - [Issue](https://github.com/canvas-gm/mordor/issues/3) Work on authentication by sending an email with a token!
 
 ### Minor
-- Find a way to manage "fake" accounts for socket tests.
 - Improve front-end registration error handling
 - Allow more settings to be registered for a Server.
 - Allow to filter on getProjects socket command.
