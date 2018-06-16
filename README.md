@@ -80,7 +80,6 @@ All important files and folders to know are here:
 ### Minor
 - Find a way to manage "fake" accounts for socket tests.
 - Improve front-end registration error handling
-- Allow to start only the http or socket server. (with start command `--http`, `--socket`)
 - Allow more settings to be registered for a Server.
 - Allow to filter on getProjects socket command.
 - Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).
