@@ -17,8 +17,13 @@ declare namespace Mordor {
      * Project configuration
      */
     export interface Configuration {
-        port: number;
+        enableSSL: boolean;
+        socketPort: number;
         httpPort: number;
+        database: {
+            host: string;
+            port: number
+        }
     }
 
     /**

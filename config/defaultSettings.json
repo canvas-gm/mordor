@@ -1,5 +1,9 @@
 {
     "enableSSL": false,
     "socketPort": "1337",
-    "httpPort": "1338"
+    "httpPort": "1338",
+    "database": {
+        "host": "localhost",
+        "port": 28015
+    }
 }

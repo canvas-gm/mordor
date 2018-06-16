@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx ava --verbose",
+    "build": "node scripts/build.js",
     "start": "node index.js --http --socket",
     "doc": "npx esdoc -c esdoc.json",
     "coverage": "npx nyc ava --verbose",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@types/es6-shim": "^0.31.37",
     "@types/node": "^10.3.0",
+    "@types/rethinkdb": "^2.3.11",
     "ava": "1.0.0-beta.5.1",
     "esdoc": "^1.1.0",
     "esdoc-node": "^1.0.3",
