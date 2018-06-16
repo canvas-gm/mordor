@@ -86,6 +86,3 @@ All important files and folders to know are here:
 - Allow to filter on getProjects socket command.
 - Work on SSL support for both socket and http server. (Need to be secure to work as a Authorization Server).
 
-## Technical fact
-- JSDoc documentation have to be completed.
-- [Issue](https://github.com/canvas-gm/mordor/issues/1) TypeScript definition is not working as expected.
