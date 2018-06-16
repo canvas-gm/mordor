@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx ava --verbose",
-    "start": "node index",
+    "start": "node index.js --http --socket",
     "doc": "npx esdoc -c esdoc.json",
     "coverage": "npx nyc ava --verbose",
     "report": "npx nyc report --reporter=html"
