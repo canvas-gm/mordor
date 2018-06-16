@@ -13,8 +13,17 @@ const {
     isLength
 } = require("validator");
 
-// Globals
-const RePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,50}$/;
+/**
+ * @const PasswordExpr
+ * @type {RegExp}
+ *
+ * (?=.*[a-z])	The string must contain at least 1 lowercase alphabetical character
+ * (?=.*[A-Z])	The string must contain at least 1 uppercase alphabetical character
+ * (?=.*[0-9])	The string must contain at least 1 numeric character
+ * (?=.[!@#$%^&]) The string must contain at least one special character
+ * (?=.{8,})	The string must be eight characters or longer
+ */
+const PasswordExpr = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 const dbDir = join(__dirname, "../../db");
 
 /**
@@ -35,7 +44,7 @@ function validateBodyData({ login, email, password, password2 }) {
     else if (!isEmail(email)) {
         throw new Error("The email entered doesn't have a valid format!");
     }
-    else if (!RePassword.test(password)) {
+    else if (!PasswordExpr.test(password)) {
         throw new Error("Invalid password format");
     }
     else if (password !== password2) {
