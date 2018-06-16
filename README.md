@@ -11,8 +11,9 @@ What is ?
 To use and start the project you will need at least:
 
 - node.js version 10 or higher.
-- npm version 5 or higher.
+- npm version 6 or higher.
 - [Windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) on Windows to be able to build native addons.
+- RethinkDB 2.3.6 or higher
 
 ## Getting Started
 

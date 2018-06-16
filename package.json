@@ -11,6 +11,10 @@
     "coverage": "npx nyc ava --verbose",
     "report": "npx nyc report --reporter=html"
   },
+  "engines": {
+      "node": ">=10.1.0",
+      "npm": ">=6.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/canvas-gm/mordor.git"
