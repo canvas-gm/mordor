@@ -1,4 +1,5 @@
 {
-  "port": "1337",
-  "httpPort": "1338"
+    "enableSSL": false,
+    "socketPort": "1337",
+    "httpPort": "1338"
 }
