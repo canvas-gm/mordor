@@ -19,7 +19,7 @@ autoLoader(SocketHandler, join(__dirname, "sockets"));
 /**
  * @func socketHandler
  * @desc Main socket handler!
- * @param {Mordor.Socket} socket Node.JS Socket
+ * @param {net.Socket} socket Node.JS Socket
  * @returns {void}
  */
 function socketHandler(socket) {
