@@ -1,29 +1,19 @@
-require("make-promises-safe");
-
 // Require Node.JS Dependencies
 const {
     writeFile,
-    readFile,
-    access,
-    constants: { R_OK }
-} = require("fs");
+    access
+} = require("fs").promises;
+const { constants: { R_OK } } = require("fs");
 const { createServer } = require("net");
 const { join } = require("path");
-const { promisify } = require("util");
 
 // Require Third-party Dependencies
+require("make-promises-safe");
 const { blue, yellow } = require("chalk");
 
 // Require Internal Modules
 const { handler: socketHandler } = require("./src/socketHandler");
 const httpServer = require("./src/httpServer");
-
-// FS Async wrapper
-const fsAsync = {
-    writeFile: promisify(writeFile),
-    readFile: promisify(readFile),
-    access: promisify(access)
-};
 
 // CONSTANTS
 const DEFAULTCONFIG = join(__dirname, "config/defaultSettings.json");
@@ -37,13 +27,13 @@ const CUSTOMCONFIG = join(__dirname, "config/editableSettings.json");
  */
 async function initializeConfiguration() {
     try {
-        await fsAsync.access(DEFAULTCONFIG, R_OK);
+        await access(DEFAULTCONFIG, R_OK);
 
         return require(CUSTOMCONFIG);
     }
     catch (error) {
         const config = require(DEFAULTCONFIG);
-        await fsAsync.writeFile(CUSTOMCONFIG, JSON.stringify(config, null, 2));
+        await writeFile(CUSTOMCONFIG, JSON.stringify(config, null, 2));
         console.log("New custom-config properly created in /config directory!");
 
         return process.exit(0);
