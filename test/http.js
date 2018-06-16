@@ -5,10 +5,13 @@ const { join } = require("path");
 // Require Third-party Dependencies
 const avaTest = require("ava");
 const request = require("supertest");
-const Datastore = require("nedb-promises");
+const rethinkdb = require("rethinkdb");
 
 // Require Internal Dependencies
 const httpServer = require("../src/httpServer");
+
+// Require config
+const config = require("../config/editableSettings.json");
 
 // required Test variable(s)
 const rootStr = readFileSync(join(__dirname, "../views/index.html")).toString();
@@ -16,8 +19,8 @@ const jsonArticles = require(join(__dirname, "../data/articles.json"));
 const registerBody = {
     login: "testAccount",
     email: "test.account@gmail.com",
-    password: "Password1953",
-    password2: "Password1953"
+    password: "P@ssword1953",
+    password2: "P@ssword1953"
 };
 let Agent;
 let Registered = false;
@@ -35,10 +38,18 @@ avaTest.after(async(test) => {
     if (!Registered) {
         return test.pass();
     }
-    const db = Datastore.create(join(__dirname, "../db/storage.db"));
-    await db.load();
-    const numRemoved = await db.remove({ email: "test.account@gmail.com" }, { multi: true });
-    test.is(numRemoved, 1);
+    const conn = await rethinkdb.connect(config.database);
+    try {
+        const wR = await rethinkdb.db("mordor").table("users")
+            .filter({ email: registerBody.email })
+            .delete()
+            .run(conn);
+        test.is(wR.deleted, 1);
+        await conn.close();
+    }
+    catch (error) {
+        await conn.close();
+    }
 
     return test.pass();
 });

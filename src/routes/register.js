@@ -1,17 +1,17 @@
-// Require Node.JS Dependencies
-const { join } = require("path");
-
 // Require Third-party Dependencies
 const is = require("@sindresorhus/is");
 const nodemailer = require("nodemailer");
 const uuid = require("uuid/v4");
-const Datastore = require("nedb-promises");
 const argon2 = require("argon2");
+const rethinkdb = require("rethinkdb");
 const {
     isAlphanumeric,
     isEmail,
     isLength
 } = require("validator");
+
+// Require config
+const config = require("../../config/editableSettings.json");
 
 /**
  * @const PasswordExpr
@@ -24,7 +24,9 @@ const {
  * (?=.{8,})	The string must be eight characters or longer
  */
 const PasswordExpr = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
-const dbDir = join(__dirname, "../../db");
+
+// RethinkDB users table
+const usersTable = rethinkdb.db("mordor").table("users");
 
 /**
  * @func validateBodyData
@@ -102,27 +104,36 @@ async function registerAccount(req) {
     const hashedPassword = await argon2.hash(password);
 
     // Load database
-    const db = Datastore.create(join(dbDir, "storage.db"));
-    await db.load();
-
-    // Try to match user in our database
-    const docs = (await db.find({ email })).filter(
-        async(user) => await argon2.verify(user.password, hashedPassword)
-    );
-    if (docs.length > 0) {
-        throw new Error("Your email is already used!");
-    }
-
-    // Insert the user in the database
+    const conn = await rethinkdb.connect(config.database);
     const token = uuid();
-    await db.insert({
-        login,
-        email,
-        password: hashedPassword,
-        token,
-        active: true,
-        registeredAt: new Date()
-    });
+
+    try {
+        // Try to match user in our database
+        const cursor = await usersTable.filter({ email }).run(conn);
+        const docs = (await cursor.toArray()).filter(
+            async(user) => await argon2.verify(user.password, hashedPassword)
+        );
+        if (docs.length > 0) {
+            throw new Error("Your email is already used!");
+        }
+
+        // Insert the user in the database
+        await usersTable.insert({
+            login,
+            email,
+            password: hashedPassword,
+            token,
+            active: true,
+            registeredAt: new Date()
+        }).run(conn);
+
+        // Close Connection!
+        await conn.close();
+    }
+    catch (err) {
+        await conn.close();
+        throw err;
+    }
 
     // Send validation email
     await sendValidationEmail(email, token);

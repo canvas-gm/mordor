@@ -7,16 +7,28 @@ const avaTest = require("ava");
 const is = require("@sindresorhus/is");
 const uuid = require("uuid/v4");
 const randToken = require("rand-token");
+const rethinkdb = require("rethinkdb");
 
 // Require Internal Dependencies
 const { handler } = require("../src/socketHandler");
 const { parseSocketMessages } = require("../src/utils");
 
+// Require config
+const config = require("../config/editableSettings.json");
+
 // Test variable(s)
 let socketServer = null;
 const authAccount = {
-    email: "gentilhomme.thomas@gmail.com",
-    password: "Password1953"
+    email: "sockettest@gmail.com",
+    password: "P@ssword1953"
+};
+
+// Test account (payload)
+const testAccount = {
+    active: true,
+    login: "test",
+    password: "$argon2i$v=19$m=4096,t=3,p=1$hfyVz+rUZkXbVzDW9E3cbg$jhEvlGdXY4rsun/Im1h+1lAA3GzeFbLSlx8P+Q+fHvc",
+    email: "sockettest@gmail.com"
 };
 
 /**
@@ -128,7 +140,36 @@ avaTest.before(async(test) => {
     });
     socketServer.removeAllListeners("error");
     socketServer.on("error", console.error);
+
+    const conn = await rethinkdb.connect(config.database);
+    try {
+        const wR = await rethinkdb.db("mordor").table("users")
+            .insert(testAccount)
+            .run(conn);
+        test.is(wR.inserted, 1);
+        await conn.close();
+    }
+    catch (error) {
+        await conn.close();
+    }
+
     test.pass();
+});
+
+// Delete test account!
+avaTest.after(async(test) => {
+    const conn = await rethinkdb.connect(config.database);
+    try {
+        const wR = await rethinkdb.db("mordor").table("users")
+            .filter({ email: testAccount.email })
+            .delete()
+            .run(conn);
+        test.is(wR.deleted, 1);
+        await conn.close();
+    }
+    catch (error) {
+        await conn.close();
+    }
 });
 
 // Initialize a new client for each new test!

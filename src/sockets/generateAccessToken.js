@@ -5,7 +5,7 @@ const argon2 = require("argon2");
 /**
  * @func generateAccessToken
  * @desc Generate an access token for a given server!
- * @param {net.Socket} socket Node.JS Socket
+ * @param {Mordor.Socket} socket Node.JS Socket
  * @param {Object} options options
  * @returns {void}
  */

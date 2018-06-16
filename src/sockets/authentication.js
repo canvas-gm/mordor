@@ -1,20 +1,13 @@
-// Require Node.JS Dependencies
-const { join } = require("path");
-
 // Require Third-party dependencies
-const Datastore = require("nedb-promises");
+const rethinkdb = require("rethinkdb");
 const is = require("@sindresorhus/is");
 const argon2 = require("argon2");
 
 // Require Internal Modules
 const RemoteClient = require("../class/remoteClient");
 
-/**
- * @const dbDir
- * @type {String}
- * @desc Absolute path to the storage (db) directory
- */
-const dbDir = join(__dirname, "../../db");
+// Require config
+const config = require("../../config/editableSettings.json");
 
 /**
  * @async
@@ -36,25 +29,33 @@ async function checkUserRegistration(email, password) {
     }
 
     // Load database
-    const db = Datastore.create(join(dbDir, "storage.db"));
-    await db.load();
+    const conn = await rethinkdb.connect(config.database);
 
     // Hash password
     const hashPassword = await argon2.hash(password);
 
     // Query to find user by matching login!
-    const query = {
-        email,
-        active: true
-    };
-    const docs = (await db.find(query)).filter(
-        async(user) => await argon2.verify(user.password, hashPassword)
-    );
-    if (docs.length === 0) {
-        throw new Error(`Unable to found any valid account with email ${email}`);
-    }
+    try {
+        const cursor = await rethinkdb.db("mordor").table("users").filter({
+            email,
+            active: true
+        }).run(conn);
+        const docs = (await cursor.toArray()).filter(
+            async(user) => await argon2.verify(user.password, hashPassword)
+        );
+        if (docs.length === 0) {
+            throw new Error(`Unable to found any valid account with email ${email}`);
+        }
 
-    return docs[0];
+        // Close DB Connection
+        await conn.close();
+
+        return docs[0];
+    }
+    catch (error) {
+        await conn.close();
+        throw error;
+    }
 }
 
 /**

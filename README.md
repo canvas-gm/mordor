@@ -74,7 +74,6 @@ All important files and folders to know are here:
 ## Roadmap
 
 ### Major
-- **BLOQUANT** - Remove local DB for RethinkDB
 - [Issue](https://github.com/canvas-gm/mordor/issues/2) Store Servers and Projects on the Disk (avoid memory usage).
 - [Issue](https://github.com/canvas-gm/mordor/issues/3) Work on authentication by sending an email with a token!
 
