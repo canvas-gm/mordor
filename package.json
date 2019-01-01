@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/canvas-gm/mordor#readme",
   "dependencies": {
-    "@sindresorhus/is": "^0.9.0",
     "argon2": "^0.19.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
