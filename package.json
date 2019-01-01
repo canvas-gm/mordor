@@ -36,7 +36,7 @@
     "rethinkdb": "^2.3.3",
     "serve-static": "^1.13.2",
     "uuid": "^3.3.2",
-    "validator": "^10.3.0"
+    "validator": "^10.10.0"
   },
   "devDependencies": {
     "@types/es6-shim": "^0.31.39",
