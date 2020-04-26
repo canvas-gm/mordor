@@ -4,23 +4,22 @@
   "description": "CGM Mordor tower",
   "main": "index.js",
   "scripts": {
-    "test": "npx ava --verbose",
+    "test": "ava --verbose",
     "build": "node scripts/build.js",
     "start": "node index.js --http --socket",
-    "doc": "npx esdoc -c esdoc.json",
-    "coverage": "npx nyc ava --verbose",
-    "report": "npx nyc report --reporter=html"
+    "doc": "esdoc -c esdoc.json",
+    "coverage": "nyc npm test",
+    "report": "nyc report --reporter=html"
   },
   "engines": {
-    "node": ">=10.1.0",
-    "npm": ">=6.0.0"
+    "node": ">=12"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/canvas-gm/mordor.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["WebGL", "canvas", "engine"],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/canvas-gm/mordor/issues"
