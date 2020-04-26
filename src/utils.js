@@ -8,7 +8,7 @@ const { readdirSync } = require("fs");
 const { extname, join } = require("path");
 
 // Require Third-party Dependencies
-const { red } = require("chalk");
+const { red } = require("kleur");
 const is = require("@sindresorhus/is");
 
 /**

@@ -1,12 +1,12 @@
 // Require Node.JS Dependencies
 const net = require("net");
 const events = require("events");
+const { randomBytes } = require("crypto")
 
 // Require Third-party Dependencies
 const avaTest = require("ava");
 const is = require("@sindresorhus/is");
-const uuid = require("uuid/v4");
-const randToken = require("rand-token");
+const uuid = require("@lukeed/uuid");
 const rethinkdb = require("rethinkdb");
 
 // Require Internal Dependencies
@@ -124,7 +124,7 @@ async function createSocketClient() {
  * @returns {Object}
  */
 function generateServer() {
-    return { name: randToken.generate(10), uid: uuid() };
+    return { name: randomBytes(10).toString("hex"), uid: uuid() };
 }
 
 // Run Socket Server before all tests!

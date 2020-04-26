@@ -1,7 +1,7 @@
 // Require Third-party Dependencies
 const is = require("@sindresorhus/is");
 const nodemailer = require("nodemailer");
-const uuid = require("uuid/v4");
+const uuid = require("@lukeed/uuid");
 const argon2 = require("argon2");
 const rethinkdb = require("rethinkdb");
 const {
@@ -119,20 +119,13 @@ async function registerAccount(req) {
 
         // Insert the user in the database
         await usersTable.insert({
-            login,
-            email,
+            login, email, token, active: true,
             password: hashedPassword,
-            token,
-            active: true,
             registeredAt: new Date()
         }).run(conn);
-
-        // Close Connection!
-        await conn.close();
     }
-    catch (err) {
+    finally {
         await conn.close();
-        throw err;
     }
 
     // Send validation email

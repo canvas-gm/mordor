@@ -1,5 +1,5 @@
 // Require Third-party Dependencies
-const uuid = require("uuid/v4");
+const uuid = require("@lukeed/uuid");
 const is = require("@sindresorhus/is");
 
 /**

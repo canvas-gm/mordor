@@ -20,7 +20,6 @@ const config = require("../../config/editableSettings.json");
  * @throws {TypeError}
  */
 async function checkUserRegistration(email, password) {
-    // Check field integrity
     if (!is.string(email)) {
         throw new TypeError("User email should be a string!");
     }
@@ -28,17 +27,13 @@ async function checkUserRegistration(email, password) {
         throw new TypeError("User password should be a string!");
     }
 
-    // Load database
     const conn = await rethinkdb.connect(config.database);
-
-    // Hash password
     const hashPassword = await argon2.hash(password);
 
     // Query to find user by matching login!
     try {
         const cursor = await rethinkdb.db("mordor").table("users").filter({
-            email,
-            active: true
+            email, active: true
         }).run(conn);
         const docs = (await cursor.toArray()).filter(
             async(user) => await argon2.verify(user.password, hashPassword)
@@ -47,14 +42,10 @@ async function checkUserRegistration(email, password) {
             throw new Error(`Unable to found any valid account with email ${email}`);
         }
 
-        // Close DB Connection
-        await conn.close();
-
         return docs[0];
     }
-    catch (error) {
+    finally {
         await conn.close();
-        throw error;
     }
 }
 

@@ -18,7 +18,11 @@
     "type": "git",
     "url": "git+https://github.com/canvas-gm/mordor.git"
   },
-  "keywords": ["WebGL", "canvas", "engine"],
+  "keywords": [
+    "WebGL",
+    "canvas",
+    "engine"
+  ],
   "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
   "license": "MIT",
   "bugs": {
@@ -26,24 +30,25 @@
   },
   "homepage": "https://github.com/canvas-gm/mordor#readme",
   "dependencies": {
+    "@lukeed/uuid": "^1.0.1",
     "argon2": "^0.26.2",
     "body-parser": "^1.19.0",
-    "chalk": "^4.0.0",
     "commander": "^5.1.0",
+    "kleur": "^3.0.3",
     "nodemailer": "^6.4.6",
-    "rand-token": "^1.0.1",
     "rethinkdb": "^2.4.2",
     "serve-static": "^1.14.1",
-    "uuid": "^7.0.3",
     "validator": "^13.0.0"
   },
   "devDependencies": {
     "@types/es6-shim": "^0.31.39",
     "@types/node": "^13.13.2",
     "@types/rethinkdb": "^2.3.14",
+    "ava": "^3.7.1",
     "esdoc": "^1.1.0",
     "esdoc-node": "^1.0.4",
     "esdoc-standard-plugin": "^1.0.0",
+    "nyc": "^15.0.1",
     "supertest": "^4.0.2"
   }
 }

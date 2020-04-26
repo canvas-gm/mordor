@@ -1,5 +1,5 @@
 // Require Third-party Dependencies
-const { yellow, blue, red } = require("chalk");
+const { yellow, blue, red } = require("kleur");
 
 // Require Internal Dependencies
 const { getJavaScriptFiles } = require("./utils");

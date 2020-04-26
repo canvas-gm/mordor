@@ -5,20 +5,15 @@
  * @returns {void}
  */
 function getProjects() {
-    const ret = {
-        error: null
-    };
+    const result = { error: null };
 
-    for (const remoteServer of this.servers.values()) {
-        Reflect.set(ret, remoteServer.name, {
-            id: remoteServer.uid,
-            projects: [
-                ...remoteServer.projects.values()
-            ].map((val) => val.valueOf())
-        });
+    for (const { name, uid, projects } of this.servers.values()) {
+        result[name] = {
+            id: uid, projects: [...projects.values()].map((val) => val.valueOf())
+        }
     }
 
-    return ret;
+    return result;
 }
 
 module.exports = getProjects;

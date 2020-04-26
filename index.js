@@ -3,7 +3,7 @@ const { createServer } = require("net");
 
 // Require Third-party Dependencies
 require("make-promises-safe");
-const { blue, yellow } = require("chalk");
+const { blue, yellow } = require("kleur");
 const program = require("commander");
 
 // Require Internal Modules

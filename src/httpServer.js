@@ -5,7 +5,7 @@ const { join } = require("path");
 const polka = require("polka");
 const serv = require("serve-static");
 const bodyParser = require("body-parser");
-const { blue, yellow, red, green } = require("chalk");
+const { blue, yellow, red, green } = require("kleur");
 const is = require("@sindresorhus/is");
 
 // Require Internal Dependencies

@@ -3,8 +3,8 @@ const events = require("events");
 
 // Require Third-party Dependencies
 const is = require("@sindresorhus/is");
-const { red, yellow, green } = require("chalk");
-const uuid = require("uuid/v4");
+const { red, yellow, green } = require("kleur");
+const uuid = require("@lukeed/uuid");
 
 // Require Internal Dependencies
 const { parseSocketMessages } = require("../utils");

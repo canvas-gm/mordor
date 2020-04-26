@@ -1,5 +1,7 @@
+// Require Node.js Dependencies
+const { randomBytes } = require("crypto");
+
 // Require Third-party Dependencies
-const randtoken = require("rand-token");
 const argon2 = require("argon2");
 
 /**
@@ -29,7 +31,7 @@ async function generateAccessToken(socket, { socketId, clientId }) {
     }, 5000);
 
     // Setup a new AccessToken
-    const lock = randtoken.generate(16);
+    const lock = randomBytes(16).toString("hex")
     const token = {
         lock,
         requested: false,
