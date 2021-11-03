@@ -38,7 +38,7 @@
     "nodemailer": "^6.4.6",
     "rethinkdb": "^2.4.2",
     "serve-static": "^1.14.1",
-    "validator": "^13.0.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/es6-shim": "^0.31.39",
